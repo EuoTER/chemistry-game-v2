@@ -52,9 +52,47 @@
     }
 
     h1{
-    font-size:50px;
-    text-shadow:0 0 20px cyan;
-    }
+font-size:50px;
+text-shadow:0 0 10px cyan,0 0 20px cyan,0 0 40px #00f7ff;
+animation:logoGlow 3s infinite alternate;
+}
+
+@keyframes logoGlow{
+0%{
+transform:scale(1);
+text-shadow:0 0 10px cyan,0 0 20px cyan;
+}
+
+100%{
+transform:scale(1.08);
+text-shadow:0 0 20px #00ffff,0 0 40px #00f7ff,0 0 80px #00f7ff;
+}
+}
+
+button{
+position:relative;
+overflow:hidden;
+}
+
+button::before{
+content:"";
+position:absolute;
+top:0;
+left:-100%;
+width:100%;
+height:100%;
+background:linear-gradient(120deg,transparent,rgba(255,255,255,0.6),transparent);
+transition:0.5s;
+}
+
+button:hover::before{
+left:100%;
+}
+
+@keyframes spin{
+from{transform:translate(-50%,-50%) rotate(0deg);}
+to{transform:translate(-50%,-50%) rotate(360deg);}
+}
 
     button{
     padding:14px 30px;
@@ -317,6 +355,110 @@ flex-direction:column;
 
 }
 
+/* LAB AREA */
+
+.lab{
+margin:auto;
+margin-top:40px;
+width:600px;
+height:350px;
+position:relative;
+}
+
+/* BEAKER */
+
+.beaker{
+position:absolute;
+bottom:40px;
+left:50%;
+transform:translateX(-50%);
+width:200px;
+height:200px;
+border:4px solid white;
+border-top:none;
+border-radius:0 0 30px 30px;
+overflow:hidden;
+}
+
+/* WATER */
+
+.water{
+position:absolute;
+bottom:0;
+width:100%;
+height:120px;
+background:linear-gradient(cyan,#0ea5e9);
+animation:wave 3s infinite ease-in-out;
+}
+
+@keyframes wave{
+0%{height:120px}
+50%{height:125px}
+100%{height:120px}
+}
+
+/* ELECTRODE */
+
+.electrode{
+position:absolute;
+top:60px;
+width:10px;
+height:150px;
+background:silver;
+}
+
+.left{
+left:220px;
+}
+
+.right{
+right:220px;
+}
+
+/* WIRES */
+
+.wire{
+position:absolute;
+top:20px;
+width:4px;
+height:80px;
+background:#444;
+}
+
+.leftWire{
+left:225px;
+}
+
+.rightWire{
+right:225px;
+}
+
+/* ELECTRIC EFFECT */
+
+.wire::after{
+content:"";
+position:absolute;
+width:4px;
+height:20px;
+background:cyan;
+animation:current 1s linear infinite;
+}
+
+@keyframes current{
+0%{top:0}
+100%{top:80px}
+}
+
+/* BATTERY */
+
+.battery{
+position:absolute;
+top:0;
+left:50%;
+transform:translateX(-50%);
+font-size:40px;
+}
+
     </style>
     </head>
 
@@ -324,14 +466,78 @@ flex-direction:column;
 
     <canvas id="particles"></canvas>
 
-    <div class="lobby">
+    <div class="lobby" id="lobby" style="display:none;">
 
     <h1>CHEMISTRY GAME</h1>
-
-    <button>เริ่มเกม</button>
+    <div class="atom"></div>
+    <button onclick="startGame()">เริ่มเกม</button>
     <button>ตั้งค่า</button>
 
     </div>
+
+    <!-- WELCOME SCREEN -->
+
+<div id="welcomeScreen" style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#020617;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+z-index:20;
+">
+
+<h1 style="font-size:50px;text-shadow:0 0 30px cyan;">
+⚡ Welcome to Electrolysis Lab
+</h1>
+
+<p>Preparing experiment...</p>
+
+</div>
+
+
+<!-- GAME SCREEN -->
+
+<div id="gameScreen" style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#020617;
+text-align:center;
+z-index:15;
+">
+
+<h1>⚡ Electrolysis Lab</h1>
+
+<div class="lab">
+
+<div class="battery">🔋</div>
+
+<div class="wire leftWire"></div>
+<div class="wire rightWire"></div>
+
+<div class="electrode left"></div>
+<div class="electrode right"></div>
+
+<div class="beaker">
+<div class="water"></div>
+</div>
+
+</div>
+
+<br>
+
+<button onclick="startExperiment()">Start Electrolysis</button>
+<button onclick="backLobby()">กลับ Lobby</button>
+
+</div>
 
     <div id="loginIcon" onclick="openProfile()">👤</div>
 
@@ -428,7 +634,9 @@ flex-direction:column;
 
     ctx.beginPath()
     ctx.arc(p.x,p.y,p.r,0,Math.PI*2)
-    ctx.fillStyle="cyan"
+    ctx.fillStyle="rgba(0,255,255,0.7)"
+    ctx.shadowBlur=10
+    ctx.shadowColor="cyan"
     ctx.fill()
 
     p.y-=p.v
@@ -532,6 +740,7 @@ flex-direction:column;
 
     alert("Login สำเร็จ")
     closeLogin()
+    lobby.style.display="block"
 
     }else{
 
@@ -571,10 +780,13 @@ flex-direction:column;
 
     function logout(){
 
-    localStorage.removeItem("currentUser")
-    closeProfile()
+localStorage.removeItem("currentUser")
+closeProfile()
 
-    }
+lobby.style.display="none"
+loginPopup.style.display="flex"
+
+}
 
     /* ===================== */
     /* AVATAR UPLOAD */
@@ -603,7 +815,93 @@ flex-direction:column;
     reader.readAsDataURL(file)
 
     })
+/* ===================== */
+/* CHECK LOGIN BEFORE LOBBY */
+/* ===================== */
 
+window.onload=function(){
+
+let current=localStorage.getItem("currentUser")
+
+if(current){
+
+// ถ้า login แล้ว
+lobby.style.display="block"
+
+}else{
+
+// ถ้ายังไม่ได้ login
+loginPopup.style.display="flex"
+
+}
+
+}
+/* ===================== */
+/* START GAME */
+/* ===================== */
+
+function startGame(){
+
+lobby.style.display="none"
+welcomeScreen.style.display="flex"
+
+setTimeout(()=>{
+
+welcomeScreen.style.display="none"
+gameScreen.style.display="block"
+
+},2000)
+
+}
+
+/* ===================== */
+/* BACK TO LOBBY */
+/* ===================== */
+
+function backLobby(){
+
+gameScreen.style.display="none"
+lobby.style.display="block"
+
+}
+
+/* ===================== */
+/* EXPERIMENT */
+/* ===================== */
+
+function startExperiment(){
+
+for(let i=0;i<20;i++){
+
+setTimeout(createBubble,i*200)
+
+}
+
+}
+
+/* ===================== */
+/* BUBBLE EFFECT */
+/* ===================== */
+
+function createBubble(){
+
+let bubble=document.createElement("div")
+
+bubble.style.position="absolute"
+bubble.style.width="8px"
+bubble.style.height="8px"
+bubble.style.borderRadius="50%"
+bubble.style.background="white"
+bubble.style.left=(Math.random()*160+20)+"px"
+bubble.style.bottom="50px"
+
+bubble.style.animation="rise 3s linear"
+
+document.querySelector(".beaker").appendChild(bubble)
+
+setTimeout(()=>bubble.remove(),3000)
+
+}
     </script>
 
     </body>
