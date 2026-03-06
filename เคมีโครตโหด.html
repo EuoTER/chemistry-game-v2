@@ -1,0 +1,610 @@
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="UTF-8">
+    <title>Chemistry Game Lobby</title>
+
+    <style>
+
+    body{
+    margin:0;
+    font-family:tahoma;
+    background:linear-gradient(-45deg,#020617,#0f172a,#020617,#0f172a);
+    background-size:400% 400%;
+    animation:bgMove 12s infinite linear;
+    color:white;
+    height:100vh;
+    overflow:hidden;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    }
+
+    @keyframes bgMove{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+    }
+
+    /* PARTICLES */
+
+    #particles{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+    }
+
+    /* LOBBY */
+
+    .lobby{
+    text-align:center;
+    z-index:2;
+    animation:float 4s ease-in-out infinite;
+    }
+
+    @keyframes float{
+    0%{transform:translateY(0px)}
+    50%{transform:translateY(-10px)}
+    100%{transform:translateY(0px)}
+    }
+
+    h1{
+    font-size:50px;
+    text-shadow:0 0 20px cyan;
+    }
+
+    button{
+    padding:14px 30px;
+    margin:12px;
+    font-size:18px;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(45deg,#2563eb,#06b6d4);
+    color:white;
+    cursor:pointer;
+    box-shadow:0 0 15px #00f0ff;
+    transition:0.2s;
+    }
+
+    button:hover{
+    transform:scale(1.1);
+    box-shadow:0 0 30px cyan;
+    }
+
+    /* LOGIN ICON */
+
+    #loginIcon{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    background:#00ffc8;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:28px;
+    cursor:pointer;
+    box-shadow:0 0 20px #00ffc8;
+    z-index:3;
+    }
+
+    /* POPUP OVERLAY */
+
+    .popup{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    display:none;
+    justify-content:center;
+    align-items:center;
+    background:rgba(0,0,0,0.6);
+    z-index:10;
+    }
+
+    /* LOGIN POPUP */
+
+    .popupBox{
+
+    background:rgba(10,15,25,0.75);
+    backdrop-filter:blur(12px);
+    padding:45px;
+    border-radius:25px;
+    text-align:center;
+    box-shadow:
+    0 0 20px rgba(0,255,255,0.5),
+    0 0 80px rgba(0,255,255,0.2);
+    width:320px;
+    position:relative;
+    overflow:hidden;
+    animation:popupShow 0.4s ease;
+
+    }
+
+    @keyframes popupShow{
+
+    0%{
+    transform:scale(0.8);
+    opacity:0;
+    }
+
+    100%{
+    transform:scale(1);
+    opacity:1;
+    }
+
+    }
+
+    .avatar{
+    width:110px;
+    height:110px;
+    border-radius:50%;
+    object-fit:cover;
+    border:3px solid cyan;
+    box-shadow:0 0 15px cyan;
+    margin-bottom:10px;
+    }
+
+    /* glowing border */
+
+    .popupBox::before{
+
+    content:"";
+    position:absolute;
+    inset:-2px;
+    border-radius:25px;
+    background:linear-gradient(
+    45deg,
+    #00f7ff,
+    #2563eb,
+    #00f7ff,
+    #2563eb
+    );
+    background-size:400%;
+    z-index:-1;
+    animation:borderMove 8s linear infinite;
+
+    }
+
+    @keyframes borderMove{
+
+    0%{background-position:0%}
+    100%{background-position:400%}
+
+    }
+
+    /* TITLE */
+
+    .popupBox h2{
+
+    font-size:28px;
+    margin-bottom:20px;
+    text-shadow:0 0 10px cyan;
+
+    }
+
+    /* INPUT */
+
+    .popupBox input{
+
+    width:230px;
+    padding:12px 15px;
+    margin:12px 0;
+    border-radius:12px;
+    border:none;
+    background:#0f172a;
+    color:white;
+    outline:none;
+    font-size:14px;
+    box-shadow:inset 0 0 10px rgba(0,255,255,0.2);
+    transition:0.2s;
+
+    }
+
+    .popupBox input:focus{
+
+    box-shadow:
+    0 0 10px cyan,
+    inset 0 0 10px rgba(0,255,255,0.3);
+
+    transform:scale(1.03);
+
+    }
+
+    /* BUTTON */
+
+    .popupBox button{
+
+    padding:12px 28px;
+    margin-top:15px;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(45deg,#2563eb,#00eaff);
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    box-shadow:0 0 15px #00f0ff;
+    transition:0.25s;
+
+    }
+
+    .popupBox button:hover{
+
+    transform:scale(1.08);
+    box-shadow:0 0 35px #00f0ff;
+
+    }
+
+    /* REGISTER TEXT */
+
+    .popupBox p{
+
+    margin-top:15px;
+    font-size:14px;
+
+    }
+
+    .popupBox span{
+
+    color:#00f7ff;
+    cursor:pointer;
+    text-shadow:0 0 10px cyan;
+
+    }
+
+    .popupBox span:hover{
+
+    text-decoration:underline;
+
+    }
+
+    .profileBox{
+    width:360px;
+    background:linear-gradient(180deg,#1cc7d0,#2b8cff);
+    color:white;
+    }
+
+    .uploadBtn{
+    display:inline-block;
+    background:#0f172a;
+    padding:8px 15px;
+    border-radius:10px;
+    margin:10px;
+    cursor:pointer;
+    box-shadow:0 0 10px cyan;
+    }
+
+    .uploadBtn:hover{
+    background:#1e293b;
+    }
+
+    .profileBox input{
+    width:220px;
+    margin-top:10px;
+    }
+
+    .stats{
+    margin-top:20px;
+    background:rgba(0,0,0,0.25);
+    padding:15px;
+    border-radius:15px;
+    }
+
+    .stats h3{
+    margin-top:0;
+    text-shadow:0 0 10px cyan;
+    }
+
+    .uploadBtn{
+    display:block;
+    margin:10px auto;
+    width:130px;
+    text-align:center;
+
+    }
+
+    @media (max-width: 768px){
+
+.lobbyButtons{
+flex-direction:column;
+}
+
+}
+
+    </style>
+    </head>
+
+    <body>
+
+    <canvas id="particles"></canvas>
+
+    <div class="lobby">
+
+    <h1>CHEMISTRY GAME</h1>
+
+    <button>เริ่มเกม</button>
+    <button>ตั้งค่า</button>
+
+    </div>
+
+    <div id="loginIcon" onclick="openProfile()">👤</div>
+
+    <!-- LOGIN -->
+
+    <div class="popup" id="loginPopup">
+
+    <div class="popupBox">
+
+    <h2 id="formTitle">Login</h2>
+
+    <input id="username" placeholder="Username"><br>
+    <input id="password" type="password" placeholder="Password"><br>
+
+    <button onclick="submitForm()" id="mainBtn">เข้าสู่ระบบ</button>
+
+    <p id="switchText">
+    ยังไม่มีบัญชี?
+    <span onclick="switchForm()" style="color:cyan;cursor:pointer">
+    สมัครสมาชิก
+    </span>
+    </p>
+
+    <button onclick="closeLogin()">ปิด</button>
+
+    </div>
+    </div>
+
+    <!-- PROFILE -->
+
+    <div class="popup" id="profilePopup">
+
+    <div class="popupBox profileBox">
+
+    <img id="avatarImage" class="avatar">
+
+    <br>
+
+    <label class="uploadBtn">
+    📁 อัพโหลดรูป
+    <input type="file" id="avatarUpload" hidden>
+    </label>
+
+    <input id="nameInput" placeholder="ชื่อผู้เล่น">
+
+    <button onclick="saveName()">บันทึกชื่อ</button>
+
+    <div class="stats">
+
+    <h3>สถิติผู้เล่น</h3>
+
+    <p>🧪 เกมที่เล่น: <span id="gamesPlayed">0</span></p>
+    <p>🏆 เลเวล: <span id="playerLevel">1</span></p>
+
+    </div>
+
+    <button onclick="logout()">ออกจากระบบ</button>
+    <button onclick="closeProfile()">ปิด</button>
+
+    </div>
+
+    </div>
+
+    <script>
+
+    /* ===================== */
+    /* PARTICLE EFFECT */
+    /* ===================== */
+
+    let canvas=document.getElementById("particles")
+    let ctx=canvas.getContext("2d")
+
+    canvas.width=window.innerWidth
+    canvas.height=window.innerHeight
+
+    let particles=[]
+
+    for(let i=0;i<60;i++){
+
+    particles.push({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    r:Math.random()*3+1,
+    v:Math.random()*0.5+0.2
+    })
+
+    }
+
+    function animateParticles(){
+
+    ctx.clearRect(0,0,canvas.width,canvas.height)
+
+    particles.forEach(p=>{
+
+    ctx.beginPath()
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2)
+    ctx.fillStyle="cyan"
+    ctx.fill()
+
+    p.y-=p.v
+
+    if(p.y<0){
+    p.y=canvas.height
+    p.x=Math.random()*canvas.width
+    }
+
+    })
+
+    requestAnimationFrame(animateParticles)
+
+    }
+
+    animateParticles()
+
+    /* ===================== */
+    /* LOGIN SYSTEM */
+    /* ===================== */
+
+    let isLogin=true
+
+    function openProfile(){
+
+    let current=localStorage.getItem("currentUser")
+
+    if(current){
+
+    let users=JSON.parse(localStorage.getItem("users"))
+
+    let data=users[current]
+
+    nameInput.value=data.username
+    avatarImage.src=data.avatar || ""
+
+    gamesPlayed.innerText=data.gamesPlayed || 0
+    playerLevel.innerText=data.level || 1
+
+    profilePopup.style.display="flex"
+
+    }else{
+
+    loginPopup.style.display="flex"
+
+    }
+
+    }
+
+    function closeLogin(){
+    loginPopup.style.display="none"
+    }
+
+    function closeProfile(){
+    profilePopup.style.display="none"
+    }
+
+    function switchForm(){
+
+    isLogin=!isLogin
+
+    if(isLogin){
+
+    formTitle.innerText="Login"
+    mainBtn.innerText="เข้าสู่ระบบ"
+
+    switchText.innerHTML=`ยังไม่มีบัญชี?
+    <span onclick="switchForm()" style="color:cyan;cursor:pointer">สมัครสมาชิก</span>`
+
+    }else{
+
+    formTitle.innerText="Register"
+    mainBtn.innerText="สมัครสมาชิก"
+
+    switchText.innerHTML=`มีบัญชีแล้ว?
+    <span onclick="switchForm()" style="color:cyan;cursor:pointer">เข้าสู่ระบบ</span>`
+
+    }
+
+    }
+
+    function submitForm(){
+
+    let user=username.value
+    let pass=password.value
+
+    if(!user || !pass){
+
+    alert("กรอกข้อมูลให้ครบ")
+    return
+
+    }
+
+    let users=JSON.parse(localStorage.getItem("users")) || {}
+
+    if(isLogin){
+
+    if(users[user] && users[user].password===pass){
+
+    localStorage.setItem("currentUser",user)
+
+    alert("Login สำเร็จ")
+    closeLogin()
+
+    }else{
+
+    alert("ข้อมูลไม่ถูกต้อง")
+
+    }
+
+    }else{
+
+    if(users[user]){
+
+    alert("Username ถูกใช้แล้ว")
+    return
+
+    }
+
+    users[user]={
+
+    username:user,
+    password:pass,
+    avatar:"",
+
+    gamesPlayed:0,
+    level:1
+
+    }
+
+    localStorage.setItem("users",JSON.stringify(users))
+
+    alert("สมัครสำเร็จ")
+
+    switchForm()
+
+    }
+
+    }
+
+    function logout(){
+
+    localStorage.removeItem("currentUser")
+    closeProfile()
+
+    }
+
+    /* ===================== */
+    /* AVATAR UPLOAD */
+    /* ===================== */
+
+    avatarUpload.addEventListener("change",function(){
+
+    let file=this.files[0]
+
+    let reader=new FileReader()
+
+    reader.onload=function(e){
+
+    let current=localStorage.getItem("currentUser")
+
+    let users=JSON.parse(localStorage.getItem("users"))
+
+    users[current].avatar=e.target.result
+
+    localStorage.setItem("users",JSON.stringify(users))
+
+    avatarImage.src=e.target.result
+
+    }
+
+    reader.readAsDataURL(file)
+
+    })
+
+    </script>
+
+    </body>
+    </html>
