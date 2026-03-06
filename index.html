@@ -1,908 +1,2265 @@
-    <!DOCTYPE html>
-    <html>
-    <head>
-    <meta charset="UTF-8">
-    <title>Chemistry Game Lobby</title>
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Chemistry Quiz Game</title>
 
-    <style>
+<style>
+.gameBox{
 
-    body{
-    margin:0;
-    font-family:tahoma;
-    background:linear-gradient(-45deg,#020617,#0f172a,#020617,#0f172a);
-    background-size:400% 400%;
-    animation:bgMove 12s infinite linear;
-    color:white;
-    height:100vh;
-    overflow:hidden;
+width:700px;
+margin:auto;
+margin-top:100px;
+
+}
+
+.questionArea{
+
+margin-bottom:40px;
+font-size:28px;
+
+}
+
+.choicesGrid{
+
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+margin-top:20px;
+
+}
+
+.choicesGrid button{
+
+width:100%;
+padding:20px;
+font-size:20px;
+border-radius:15px;
+background:#2563eb;
+color:white;
+border:none;
+cursor:pointer;
+transition:0.2s;
+
+}
+
+.choicesGrid button:hover{
+
+transform:scale(1.05);
+background:#1e40af;
+
+}
+
+body{
+margin:0;
+font-family:tahoma;
+background:url("lobby.png");
+background-size:cover;
+color: aquamarine;
+text-align:center;
+}
+
+.screen{
+
+display:none;
+
+}
+
+.screen{
+  display:none;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+}
+
+#menu{
     display:flex;
     justify-content:center;
     align-items:center;
-    }
-
-    @keyframes bgMove{
-    0%{background-position:0% 50%;}
-    50%{background-position:100% 50%;}
-    100%{background-position:0% 50%;}
-    }
-
-    /* PARTICLES */
-
-    #particles{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    pointer-events:none;
-    }
-
-    /* LOBBY */
-
-    .lobby{
-    text-align:center;
-    z-index:2;
-    animation:float 4s ease-in-out infinite;
-    }
-
-    @keyframes float{
-    0%{transform:translateY(0px)}
-    50%{transform:translateY(-10px)}
-    100%{transform:translateY(0px)}
-    }
-
-    h1{
-font-size:50px;
-text-shadow:0 0 10px cyan,0 0 20px cyan,0 0 40px #00f7ff;
-animation:logoGlow 3s infinite alternate;
+    min-height:100vh;
 }
 
-@keyframes logoGlow{
-0%{
-transform:scale(1);
-text-shadow:0 0 10px cyan,0 0 20px cyan;
-}
-
-100%{
-transform:scale(1.08);
-text-shadow:0 0 20px #00ffff,0 0 40px #00f7ff,0 0 80px #00f7ff;
-}
+.box{
+    background:rgba(0,0,0,0.75);
+    padding:30px;
+    border-radius:20px;
+    width:90%;
+    max-width:500px;
 }
 
 button{
-position:relative;
-overflow:hidden;
-}
 
-button::before{
-content:"";
-position:absolute;
-top:0;
-left:-100%;
-width:100%;
-height:100%;
-background:linear-gradient(120deg,transparent,rgba(255,255,255,0.6),transparent);
-transition:0.5s;
-}
-
-button:hover::before{
-left:100%;
-}
-
-@keyframes spin{
-from{transform:translate(-50%,-50%) rotate(0deg);}
-to{transform:translate(-50%,-50%) rotate(360deg);}
-}
-
-    button{
-    padding:14px 30px;
-    margin:12px;
-    font-size:18px;
-    border:none;
-    border-radius:12px;
-    background:linear-gradient(45deg,#2563eb,#06b6d4);
-    color:white;
-    cursor:pointer;
-    box-shadow:0 0 15px #00f0ff;
-    transition:0.2s;
-    }
-
-    button:hover{
-    transform:scale(1.1);
-    box-shadow:0 0 30px cyan;
-    }
-
-    /* LOGIN ICON */
-
-    #loginIcon{
-    position:fixed;
-    bottom:20px;
-    right:20px;
-    width:60px;
-    height:60px;
-    border-radius:50%;
-    background:#00ffc8;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    font-size:28px;
-    cursor:pointer;
-    box-shadow:0 0 20px #00ffc8;
-    z-index:3;
-    }
-
-    /* POPUP OVERLAY */
-
-    .popup{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    display:none;
-    justify-content:center;
-    align-items:center;
-    background:rgba(0,0,0,0.6);
-    z-index:10;
-    }
-
-    /* LOGIN POPUP */
-
-    .popupBox{
-
-    background:rgba(10,15,25,0.75);
-    backdrop-filter:blur(12px);
-    padding:45px;
-    border-radius:25px;
-    text-align:center;
-    box-shadow:
-    0 0 20px rgba(0,255,255,0.5),
-    0 0 80px rgba(0,255,255,0.2);
-    width:320px;
-    position:relative;
-    overflow:hidden;
-    animation:popupShow 0.4s ease;
-
-    }
-
-    @keyframes popupShow{
-
-    0%{
-    transform:scale(0.8);
-    opacity:0;
-    }
-
-    100%{
-    transform:scale(1);
-    opacity:1;
-    }
-
-    }
-
-    .avatar{
-    width:110px;
-    height:110px;
-    border-radius:50%;
-    object-fit:cover;
-    border:3px solid cyan;
-    box-shadow:0 0 15px cyan;
-    margin-bottom:10px;
-    }
-
-    /* glowing border */
-
-    .popupBox::before{
-
-    content:"";
-    position:absolute;
-    inset:-2px;
-    border-radius:25px;
-    background:linear-gradient(
-    45deg,
-    #00f7ff,
-    #2563eb,
-    #00f7ff,
-    #2563eb
-    );
-    background-size:400%;
-    z-index:-1;
-    animation:borderMove 8s linear infinite;
-
-    }
-
-    @keyframes borderMove{
-
-    0%{background-position:0%}
-    100%{background-position:400%}
-
-    }
-
-    /* TITLE */
-
-    .popupBox h2{
-
-    font-size:28px;
-    margin-bottom:20px;
-    text-shadow:0 0 10px cyan;
-
-    }
-
-    /* INPUT */
-
-    .popupBox input{
-
-    width:230px;
-    padding:12px 15px;
-    margin:12px 0;
-    border-radius:12px;
-    border:none;
-    background:#0f172a;
-    color:white;
-    outline:none;
-    font-size:14px;
-    box-shadow:inset 0 0 10px rgba(0,255,255,0.2);
-    transition:0.2s;
-
-    }
-
-    .popupBox input:focus{
-
-    box-shadow:
-    0 0 10px cyan,
-    inset 0 0 10px rgba(0,255,255,0.3);
-
-    transform:scale(1.03);
-
-    }
-
-    /* BUTTON */
-
-    .popupBox button{
-
-    padding:12px 28px;
-    margin-top:15px;
-    border:none;
-    border-radius:12px;
-    background:linear-gradient(45deg,#2563eb,#00eaff);
-    color:white;
-    font-size:16px;
-    cursor:pointer;
-    box-shadow:0 0 15px #00f0ff;
-    transition:0.25s;
-
-    }
-
-    .popupBox button:hover{
-
-    transform:scale(1.08);
-    box-shadow:0 0 35px #00f0ff;
-
-    }
-
-    /* REGISTER TEXT */
-
-    .popupBox p{
-
-    margin-top:15px;
-    font-size:14px;
-
-    }
-
-    .popupBox span{
-
-    color:#00f7ff;
-    cursor:pointer;
-    text-shadow:0 0 10px cyan;
-
-    }
-
-    .popupBox span:hover{
-
-    text-decoration:underline;
-
-    }
-
-    .profileBox{
-    width:360px;
-    background:linear-gradient(180deg,#1cc7d0,#2b8cff);
-    color:white;
-    }
-
-    .uploadBtn{
-    display:inline-block;
-    background:#0f172a;
-    padding:8px 15px;
-    border-radius:10px;
-    margin:10px;
-    cursor:pointer;
-    box-shadow:0 0 10px cyan;
-    }
-
-    .uploadBtn:hover{
-    background:#1e293b;
-    }
-
-    .profileBox input{
-    width:220px;
-    margin-top:10px;
-    }
-
-    .stats{
-    margin-top:20px;
-    background:rgba(0,0,0,0.25);
-    padding:15px;
-    border-radius:15px;
-    }
-
-    .stats h3{
-    margin-top:0;
-    text-shadow:0 0 10px cyan;
-    }
-
-    .uploadBtn{
-    display:block;
-    margin:10px auto;
-    width:130px;
-    text-align:center;
-
-    }
-
-    @media (max-width: 768px){
-
-.lobbyButtons{
-flex-direction:column;
-}
+padding:15px;
+margin:10px;
+width:220px;
+font-size:18px;
+border:none;
+border-radius:10px;
+background:#2563eb;
+color:white;
+cursor:pointer;
 
 }
 
-/* LAB AREA */
+button:hover{
 
-.lab{
-margin:auto;
-margin-top:40px;
-width:600px;
-height:350px;
-position:relative;
+background:#1d4ed8;
+
 }
 
-/* BEAKER */
+input[type=range]{
 
-.beaker{
-position:absolute;
-bottom:40px;
-left:50%;
-transform:translateX(-50%);
 width:200px;
-height:200px;
-border:4px solid white;
-border-top:none;
-border-radius:0 0 30px 30px;
-overflow:hidden;
+
 }
 
-/* WATER */
-
-.water{
-position:absolute;
-bottom:0;
-width:100%;
-height:120px;
-background:linear-gradient(cyan,#0ea5e9);
-animation:wave 3s infinite ease-in-out;
+/* ไอคอนมุมขวาล่าง */
+#loginIcon{
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  font-size: 30px;
+  background: #00ffcc;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 15px #00ffcc;
 }
 
-@keyframes wave{
-0%{height:120px}
-50%{height:125px}
-100%{height:120px}
+/* พื้นหลังมืดตอนเปิด login */
+#loginPopup{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  display: none;
+  justify-content: center;
+  align-items: center;
 }
 
-/* ELECTRODE */
-
-.electrode{
-position:absolute;
-top:60px;
-width:10px;
-height:150px;
-background:silver;
+/* กล่อง login */
+.loginBox{
+  background: #111;
+  padding: 30px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 0 20px #00ffcc;
 }
 
-.left{
-left:220px;
+.loginBox input{
+  margin: 10px;
+  padding: 8px;
 }
 
-.right{
-right:220px;
+#profilePopup{
+  position: fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background: rgba(0,0,0,0.8);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
 }
 
-/* WIRES */
-
-.wire{
-position:absolute;
-top:20px;
-width:4px;
-height:80px;
-background:#444;
+.profileBox{
+  background:#111;
+  padding:30px;
+  border-radius:20px;
+  text-align:center;
+  box-shadow:0 0 20px #00ffcc;
 }
 
-.leftWire{
-left:225px;
+.avatarWrapper{
+  width:120px;
+  height:120px;
+  border-radius:50%;
+  overflow:hidden;
+  margin:10px auto;
+  border:3px solid #00ffcc;
+  box-shadow:0 0 20px #00ffcc;
 }
 
-.rightWire{
-right:225px;
+.avatarWrapper img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
 }
 
-/* ELECTRIC EFFECT */
-
-.wire::after{
-content:"";
-position:absolute;
-width:4px;
-height:20px;
-background:cyan;
-animation:current 1s linear infinite;
+.uploadBtn{
+  display:inline-block;
+  margin-top:15px;
+  padding:10px 20px;
+  border-radius:25px;
+  background:linear-gradient(45deg,#2563eb,#06b6d4);
+  cursor:pointer;
+  color:white;
+  font-size:14px;
 }
 
-@keyframes current{
-0%{top:0}
-100%{top:80px}
+.uploadBtn input{
+  display:none;
 }
 
-/* BATTERY */
-
-.battery{
-position:absolute;
-top:0;
-left:50%;
-transform:translateX(-50%);
-font-size:40px;
+.inputGroup{
+  position:relative;
+  margin:20px 0;
 }
 
-    </style>
-    </head>
+.inputGroup input{
+  width:260px;
+  padding:14px;
+  border-radius:30px;
+  border:2px solid #00ffcc;
+  background:rgba(0,0,0,0.6);
+  color:white;
+  outline:none;
+  font-size:14px;
+  transition:0.3s;
+}
 
-    <body>
+.inputGroup input:focus{
+  box-shadow:0 0 15px #00ffcc;
+  transform:scale(1.05);
+}
 
-    <canvas id="particles"></canvas>
+.inputGroup label{
+  position:absolute;
+  left:20px;
+  top:14px;
+  color:#aaa;
+  pointer-events:none;
+  transition:0.3s;
+}
 
-    <div class="lobby" id="lobby" style="display:none;">
+.inputGroup input:focus + label,
+.inputGroup input:valid + label{
+  top:-10px;
+  font-size:12px;
+  color:#00ffcc;
+  background:#111;
+  padding:0 6px;
+}
 
-    <h1>CHEMISTRY GAME</h1>
-    <div class="atom"></div>
-    <button onclick="startGame()">เริ่มเกม</button>
-    <button>ตั้งค่า</button>
+/* กล่องเปลี่ยนชื่อแบบใหม่ */
+.nameChangeBox{
+  position:relative;
+  margin-top:25px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:15px;
+}
 
-    </div>
+.nameChangeBox input{
+  width:280px;
+  padding:14px;
+  border-radius:30px;
+  border:2px solid #00ffcc;
+  background:rgba(0,0,0,0.6);
+  color:white;
+  outline:none;
+  font-size:15px;
+  transition:0.3s;
+  text-align:center;
+}
 
-    <!-- WELCOME SCREEN -->
+.nameChangeBox input:focus{
+  box-shadow:0 0 20px #00ffcc;
+  transform:scale(1.05);
+}
 
-<div id="welcomeScreen" style="
+.nameChangeBox label{
+  position:absolute;
+  top:-10px;
+  font-size:13px;
+  color:#00ffcc;
+  background:#111;
+  padding:0 8px;
+}
+
+/* END SCREEN */
+
+#end{
+
 display:none;
+
 position:fixed;
+
 top:0;
 left:0;
+
 width:100%;
 height:100%;
-background:#020617;
+
 justify-content:center;
 align-items:center;
-flex-direction:column;
-z-index:20;
-">
 
-<h1 style="font-size:50px;text-shadow:0 0 30px cyan;">
-⚡ Welcome to Electrolysis Lab
-</h1>
+}
 
-<p>Preparing experiment...</p>
+.endBox{
+
+background:rgba(0,0,0,0.6);
+
+padding:40px;
+
+border-radius:20px;
+
+text-align:center;
+
+box-shadow:0 0 30px rgba(0,255,255,0.5);
+
+}
+/* ========================= */
+/* GLOBAL ANIMATION */
+/* ========================= */
+
+.screen{
+
+animation:fadeIn 0.5s ease;
+
+}
+
+@keyframes fadeIn{
+
+from{
+
+opacity:0;
+transform:translateY(20px);
+
+}
+
+to{
+
+opacity:1;
+transform:translateY(0);
+
+}
+
+}
+
+
+
+/* ========================= */
+/* MENU BOX */
+/* ========================= */
+
+.box{
+
+background:rgba(0,0,0,0.75);
+padding:30px;
+border-radius:20px;
+display:inline-block;
+min-width:300px;
+
+backdrop-filter:blur(10px);
+
+box-shadow:
+0 0 20px rgba(0,255,255,0.4),
+0 0 60px rgba(0,255,255,0.2);
+
+animation:pop 0.5s ease;
+
+}
+
+@keyframes pop{
+
+from{
+
+transform:scale(0.8);
+opacity:0;
+
+}
+
+to{
+
+transform:scale(1);
+opacity:1;
+
+}
+
+}
+
+
+
+/* ========================= */
+/* BUTTON */
+/* ========================= */
+
+button{
+
+padding:15px;
+margin:10px;
+width:220px;
+font-size:18px;
+border:none;
+border-radius:10px;
+background:linear-gradient(45deg,#2563eb,#06b6d4);
+color:white;
+cursor:pointer;
+
+transition:0.3s;
+
+box-shadow:0 5px 15px rgba(0,0,0,0.4);
+
+}
+
+button:hover{
+
+transform:translateY(-3px) scale(1.05);
+
+box-shadow:0 10px 25px rgba(0,0,0,0.6);
+
+}
+
+button:active{
+
+transform:scale(0.95);
+
+}
+
+
+
+/* ========================= */
+/* QUESTION */
+/* ========================= */
+
+.questionArea{
+
+margin-bottom:40px;
+font-size:32px;
+
+animation:fadeIn 0.5s;
+
+}
+
+
+
+/* ========================= */
+/* CHOICES */
+/* ========================= */
+
+.choicesGrid button{
+
+background:linear-gradient(45deg,#2563eb,#06b6d4);
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+
+
+.choicesGrid button::after{
+
+content:"";
+
+position:absolute;
+
+width:100%;
+height:100%;
+
+background:rgba(255,255,255,0.2);
+
+top:0;
+left:-100%;
+
+transition:0.4s;
+
+}
+
+.choicesGrid button:hover::after{
+
+left:100%;
+
+}
+
+
+
+/* ========================= */
+/* RESULT TEXT */
+/* ========================= */
+
+#result{
+
+font-size:24px;
+
+animation:fadeIn 0.5s;
+
+}
+
+
+
+/* ========================= */
+/* SCORE */
+/* ========================= */
+
+#score{
+
+font-size:24px;
+
+color:#00ffff;
+
+text-shadow:
+
+0 0 10px cyan,
+0 0 20px cyan;
+
+}
+
+
+
+/* ========================= */
+/* END BOX */
+/* ========================= */
+
+.endBox{
+
+background:rgba(0,0,0,0.7);
+
+padding:40px;
+
+border-radius:20px;
+
+text-align:center;
+
+box-shadow:
+
+0 0 20px cyan,
+0 0 60px cyan;
+
+animation:pop 0.6s;
+
+}
+
+
+
+/* ========================= */
+/* TITLE GLOW */
+/* ========================= */
+
+h1{
+
+text-shadow:
+
+0 0 10px cyan,
+0 0 20px cyan,
+0 0 40px cyan;
+
+}
+
+
+
+/* ========================= */
+/* BACKGROUND ANIMATION */
+/* ========================= */
+
+body{
+
+animation:bgZoom 20s infinite alternate ease-in-out;
+
+}
+
+@keyframes bgZoom{
+
+from{
+
+background-size:100%;
+
+}
+
+to{
+
+background-size:110%;
+
+}
+
+}
+
+/* COUNTDOWN */
+
+#countdown{
+
+position:fixed;
+top:50%;
+left:50%;
+
+transform:translate(-50%,-50%);
+
+font-size:120px;
+font-weight:bold;
+
+color:white;
+
+text-shadow:
+0 0 20px cyan,
+0 0 40px cyan,
+0 0 80px cyan;
+
+opacity:0;
+
+pointer-events:none;
+
+z-index:999;
+
+}
+
+.countAnim{
+
+animation:countPop 0.5s;
+
+}
+
+@keyframes countPop{
+
+0%{
+
+transform:translate(-50%,-50%) scale(0.5);
+opacity:0;
+
+}
+
+50%{
+
+transform:translate(-50%,-50%) scale(1.2);
+opacity:1;
+
+}
+
+100%{
+
+transform:translate(-50%,-50%) scale(1);
+opacity:1;
+
+}
+
+}
+
+.matchGrid{
+  display:grid;
+  grid-template-columns:repeat(8,1fr);
+  gap:10px;
+  margin-top:20px;
+}
+
+/* MINING MAP */
+
+.mineGrid{
+
+display:grid;
+grid-template-columns:repeat(10,50px);
+gap:5px;
+justify-content:center;
+margin:20px;
+
+}
+
+.mineBlock{
+
+width:50px;
+height:50px;
+
+background:#333;
+
+border-radius:6px;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+cursor:pointer;
+
+transition:0.2s;
+
+}
+
+.mineBlock:hover{
+
+transform:scale(1.1);
+background:#555;
+
+}
+
+/* INVENTORY */
+
+.inventoryGrid{
+
+display:grid;
+grid-template-columns:repeat(5,60px);
+gap:10px;
+justify-content:center;
+
+}
+
+.invSlot{
+
+width:60px;
+height:60px;
+
+background:#111;
+
+border:2px solid cyan;
+
+border-radius:10px;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+font-size:18px;
+
+}
+
+/* LAB BUBBLE */
+
+#bubbleArea{
+
+position:relative;
+
+height:120px;
+
+margin-top:20px;
+
+}
+
+.bubble{
+
+width:12px;
+height:12px;
+
+background:white;
+
+border-radius:50%;
+
+position:absolute;
+
+bottom:0;
+
+animation:bubbleUp 2s infinite;
+
+}
+
+@keyframes bubbleUp{
+
+0%{
+transform:translateY(0);
+opacity:1;
+}
+
+100%{
+transform:translateY(-100px);
+opacity:0;
+}
+
+}
+
+.card.flipped{
+  background:#06b6d4;
+}
+
+.card.matched{
+  background:green;
+}
+
+.card{
+  background:#222;
+  aspect-ratio:1/1;
+  border-radius:12px;
+  cursor:pointer;
+  color:white;
+  font-size:18px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.labContainer{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+margin-top:20px;
+}
+
+.craftList{
+background:rgba(255,255,255,0.05);
+padding:15px;
+border-radius:10px;
+max-height:300px;
+overflow-y:auto;
+}
+
+.craftItem{
+padding:10px;
+margin-bottom:10px;
+border-radius:8px;
+font-size:16px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.craftItem.can{
+background:rgba(0,255,100,0.15);
+border:1px solid #00ff88;
+}
+
+.craftItem.cant{
+background:rgba(255,0,0,0.15);
+border:1px solid #ff5555;
+}
+
+.craftBtn{
+padding:5px 10px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+.craftBtn:disabled{
+opacity:0.4;
+cursor:not-allowed;
+}
+
+#labInventory{
+margin-top:10px;
+background:rgba(255,255,255,0.05);
+padding:10px;
+border-radius:10px;
+font-size:14px;
+}
+
+#questionBox{
+display:none;
+background:rgba(15,23,42,0.95);
+padding:30px;
+border-radius:20px;
+width:420px;
+margin:auto;
+margin-top:20px;
+box-shadow:0 0 25px rgba(0,255,255,0.4);
+text-align:center;
+animation:popupShow 0.4s ease;
+}
+
+#questionBox p{
+font-size:20px;
+margin-bottom:15px;
+text-shadow:0 0 8px cyan;
+}
+
+#answerInput{
+width:240px;
+padding:12px 15px;
+border-radius:12px;
+border:none;
+background:#020617;
+color:white;
+outline:none;
+font-size:16px;
+box-shadow:inset 0 0 10px rgba(0,255,255,0.2);
+transition:0.25s;
+}
+
+#answerInput:focus{
+box-shadow:0 0 12px cyan;
+transform:scale(1.05);
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- MENU -->
+
+<!-- MENU -->
+<div id="menu" class="screen">
+  <div class="box">
+    <h1>CHEMISTRY GAME</h1>
+    <button onclick="goToModeSelect()">เริ่มเกม</button>
+    <button onclick="openSettings()">ตั้งค่า</button>
+  </div>
+</div>
+
+<!-- เลือกโหมดเกม -->
+<div id="modeSelect" class="screen">
+  <div class="box">
+    <h2>เลือกโหมดเกม</h2>
+
+    <button onclick="startQuiz()">เกมตอบคำถามเคมี</button>
+    <button onclick="startMatching()">เกมจับคู่สารเคมี</button>
+
+    <button onclick="startMining()">เกมขุดหาแร่</button>
+
+    <br><br>
+    <button onclick="goToMenu()">กลับ</button>
+  </div>
+</div>
+
+<!-- MATCHING GAME -->
+<div id="miningGame" class="screen">
+  <div class="box">
+
+    <h2>⛏️ เหมืองแร่เคมี</h2>
+
+    <div id="mineGrid" class="mineGrid"></div>
+
+    <h3>🎒 Inventory</h3>
+
+    <div id="inventory" class="inventoryGrid"></div>
+
+    <br>
+
+    <button onclick="openLab()">🧪 เข้า Lab</button>
+
+    <button onclick="goToModeSelect()">กลับ</button>
+
+  </div>
+</div>
+
+<!-- LAB SCREEN -->
+<div id="labScreen" class="screen">
+
+<div class="box">
+
+<h2>🧪 Chemistry Craft Lab</h2>
+
+<div class="labContainer">
+
+<div class="craftList" id="craftList"></div>
+
+<div>
+
+<h3>📜 สูตรการคราฟ</h3>
+
+<div id="craftRecipe">
+เลือกสูตรเพื่อดูรายละเอียด
+</div>
+
+<h3>🎒 Inventory</h3>
+
+<div id="labInventory"></div>
 
 </div>
 
-
-<!-- GAME SCREEN -->
-
-<div id="gameScreen" style="
-display:none;
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:#020617;
-text-align:center;
-z-index:15;
-">
-
-<h1>⚡ Electrolysis Lab</h1>
-
-<div class="lab">
-
-<div class="battery">🔋</div>
-
-<div class="wire leftWire"></div>
-<div class="wire rightWire"></div>
-
-<div class="electrode left"></div>
-<div class="electrode right"></div>
-
-<div class="beaker">
-<div class="water"></div>
 </div>
 
 </div>
 
 <br>
 
-<button onclick="startExperiment()">Start Electrolysis</button>
-<button onclick="backLobby()">กลับ Lobby</button>
+<button onclick="goToMining()">← กลับเหมือง</button>
 
 </div>
 
-    <div id="loginIcon" onclick="openProfile()">👤</div>
+</div>
 
-    <!-- LOGIN -->
+<!-- SETTINGS -->
 
-    <div class="popup" id="loginPopup">
+<div id="settings" class="screen">
 
-    <div class="popupBox">
+<div class="box">
 
-    <h2 id="formTitle">Login</h2>
+<h2>⚙️ ตั้งค่าเสียง</h2>
 
-    <input id="username" placeholder="Username"><br>
-    <input id="password" type="password" placeholder="Password"><br>
+เพลง<br>
+<input type="range" id="musicSlider"
+min="0" max="1" step="0.01">
 
-    <button onclick="submitForm()" id="mainBtn">เข้าสู่ระบบ</button>
+<br><br>
 
-    <p id="switchText">
-    ยังไม่มีบัญชี?
-    <span onclick="switchForm()" style="color:cyan;cursor:pointer">
-    สมัครสมาชิก
-    </span>
-    </p>
+เอฟเฟกต์<br>
+<input type="range" id="sfxSlider"
+min="0" max="1" step="0.01">
 
-    <button onclick="closeLogin()">ปิด</button>
+<br><br>
 
-    </div>
-    </div>
+<button onclick="closeSettings()">กลับ</button>
 
-    <!-- PROFILE -->
+</div>
 
-    <div class="popup" id="profilePopup">
+</div>
 
-    <div class="popupBox profileBox">
 
-    <img id="avatarImage" class="avatar">
 
-    <br>
+<!-- GAME -->
 
-    <label class="uploadBtn">
-    📁 อัพโหลดรูป
-    <input type="file" id="avatarUpload" hidden>
-    </label>
+<div id="game" class="screen">
 
-    <input id="nameInput" placeholder="ชื่อผู้เล่น">
+<div class="box gameBox">
 
-    <button onclick="saveName()">บันทึกชื่อ</button>
+<div class="questionArea">
 
-    <div class="stats">
+<h2 id="question"></h2>
 
-    <h3>สถิติผู้เล่น</h3>
+</div>
 
-    <p>🧪 เกมที่เล่น: <span id="gamesPlayed">0</span></p>
-    <p>🏆 เลเวล: <span id="playerLevel">1</span></p>
+<div id="choices" class="choicesGrid"></div>
 
-    </div>
+<h3 id="result"></h3>
 
-    <button onclick="logout()">ออกจากระบบ</button>
-    <button onclick="closeProfile()">ปิด</button>
+<h3 id="score">คะแนน: 0</h3>
 
-    </div>
+</div>
 
-    </div>
+<!-- COUNTDOWN -->
 
-    <script>
+<div id="countdown">
 
-    /* ===================== */
-    /* PARTICLE EFFECT */
-    /* ===================== */
+</div>
 
-    let canvas=document.getElementById("particles")
-    let ctx=canvas.getContext("2d")
+</div>
 
-    canvas.width=window.innerWidth
-    canvas.height=window.innerHeight
+<!-- END -->
 
-    let particles=[]
+<div id="end" class="screen">
 
-    for(let i=0;i<60;i++){
+<div class="endBox">
 
-    particles.push({
-    x:Math.random()*canvas.width,
-    y:Math.random()*canvas.height,
-    r:Math.random()*3+1,
-    v:Math.random()*0.5+0.2
-    })
+<h1>🎉 ยินดีด้วย!</h1>
 
-    }
+<h2 id="finalScore"></h2>
 
-    function animateParticles(){
+<h1 id="rank"></h1>
 
-    ctx.clearRect(0,0,canvas.width,canvas.height)
+<button onclick="backMenu()">กลับ Menu</button>
 
-    particles.forEach(p=>{
+</div>
 
-    ctx.beginPath()
-    ctx.arc(p.x,p.y,p.r,0,Math.PI*2)
-    ctx.fillStyle="rgba(0,255,255,0.7)"
-    ctx.shadowBlur=10
-    ctx.shadowColor="cyan"
-    ctx.fill()
+</div>
 
-    p.y-=p.v
 
-    if(p.y<0){
-    p.y=canvas.height
-    p.x=Math.random()*canvas.width
-    }
 
-    })
+<!-- SOUND -->
 
-    requestAnimationFrame(animateParticles)
+<audio id="menuMusic" src="menu.mp3" loop></audio>
 
-    }
+<audio id="gameMusic" src="bg.mp3" loop></audio>
 
-    animateParticles()
+<audio id="correctSound" src="correct.mp3"></audio>
 
-    /* ===================== */
-    /* LOGIN SYSTEM */
-    /* ===================== */
+<audio id="wrongSound" src="wrong.mp3"></audio>
 
-    let isLogin=true
+<audio id="countSound" src="count.mp3"></audio>
 
-    function openProfile(){
+<audio id="startSound" src="start.mp3"></audio>
 
-    let current=localStorage.getItem("currentUser")
+<script>
 
-    if(current){
+let isLogin = true;
 
-    let users=JSON.parse(localStorage.getItem("users"))
+function openProfile(){
+  let currentUser = localStorage.getItem("currentUser");
+  let data = JSON.parse(localStorage.getItem("userData"));
 
-    let data=users[current]
+  if(currentUser && data){
 
-    nameInput.value=data.username
-    avatarImage.src=data.avatar || ""
+    document.getElementById("profileName").innerText = data.username;
+    document.getElementById("highScore").innerText = data.highScore;
+    document.getElementById("playCount").innerText = data.playCount;
+    document.getElementById("avatarImage").src = data.avatar || "";
 
-    gamesPlayed.innerText=data.gamesPlayed || 0
-    playerLevel.innerText=data.level || 1
+    document.getElementById("profilePopup").style.display="flex";
 
-    profilePopup.style.display="flex"
+  } else {
+    openLogin();
+  }
+}
 
+function changeName(){
+  let data = JSON.parse(localStorage.getItem("userData"));
+  let newName = document.getElementById("newName").value;
+
+  if(newName){
+    data.username = newName;
+    localStorage.setItem("userData", JSON.stringify(data));
+    alert("เปลี่ยนชื่อแล้ว");
+    openProfile();
+  }
+}
+
+function closeProfile(){
+  document.getElementById("profilePopup").style.display="none";
+}
+
+function logout(){
+  localStorage.removeItem("currentUser");
+  alert("ออกจากระบบแล้ว");
+  closeProfile();
+}
+
+function openLogin(){
+  document.getElementById("loginPopup").style.display="flex";
+}
+
+function closeLogin(){
+  document.getElementById("loginPopup").style.display="none";
+}
+
+function switchForm(){
+  isLogin = !isLogin;
+
+  if(isLogin){
+    formTitle.innerText = "Login";
+    mainBtn.innerText = "เข้าสู่ระบบ";
+    switchText.innerHTML = `
+      ยังไม่มีบัญชี?
+      <span onclick="switchForm()" style="color:#00ffcc; cursor:pointer;">
+        สมัครสมาชิก
+      </span>
+    `;
+  } else {
+    formTitle.innerText = "Register";
+    mainBtn.innerText = "สมัครสมาชิก";
+    switchText.innerHTML = `
+      มีบัญชีแล้ว?
+      <span onclick="switchForm()" style="color:#00ffcc; cursor:pointer;">
+        เข้าสู่ระบบ
+      </span>
+    `;
+  }
+}
+
+function submitForm(){
+
+  let user = document.getElementById("username").value;
+  let pass = document.getElementById("password").value;
+
+  if(!user || !pass){
+    alert("กรอกข้อมูลให้ครบก่อน");
+    return;
+  }
+
+  let savedData = JSON.parse(localStorage.getItem("userData"));
+
+  if(isLogin){
+
+    // ===== LOGIN =====
+    if(savedData &&
+       savedData.username === user &&
+       savedData.password === pass){
+
+        localStorage.setItem("currentUser", user);
+        alert("เข้าสู่ระบบสำเร็จ!");
+        closeLogin();
+        openProfile();
     }else{
-
-    loginPopup.style.display="flex"
-
+        alert("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง");
     }
 
-    }
+  }else{
 
-    function closeLogin(){
-    loginPopup.style.display="none"
-    }
+    // ===== REGISTER =====
+    let userData = {
+      username: user,
+      password: pass,
+      highScore: 0,
+      playCount: 0,
+      avatar: "👤"
+    };
 
-    function closeProfile(){
-    profilePopup.style.display="none"
-    }
+    localStorage.setItem("userData", JSON.stringify(userData));
+    alert("สมัครสมาชิกสำเร็จ!");
+    switchForm();
 
-    function switchForm(){
+  }
+}
 
-    isLogin=!isLogin
+// QUESTIONS
 
-    if(isLogin){
+let questions=[
 
-    formTitle.innerText="Login"
-    mainBtn.innerText="เข้าสู่ระบบ"
+{
 
-    switchText.innerHTML=`ยังไม่มีบัญชี?
-    <span onclick="switchForm()" style="color:cyan;cursor:pointer">สมัครสมาชิก</span>`
+q:"กระบวนการที่ใช้ไฟฟ้าแยกสารเรียกว่าอะไร?",
 
-    }else{
+c:["อิเล็กโทรลิซิส","ออกซิเดชัน","รีดักชัน","การเผาไหม้"],
 
-    formTitle.innerText="Register"
-    mainBtn.innerText="สมัครสมาชิก"
+a:0,
 
-    switchText.innerHTML=`มีบัญชีแล้ว?
-    <span onclick="switchForm()" style="color:cyan;cursor:pointer">เข้าสู่ระบบ</span>`
+info:"Electrolysis คือการใช้ไฟฟ้าแยกสาร"
 
-    }
+},
 
-    }
+{
 
-    function submitForm(){
+q:"ขั้วที่เกิดการรับอิเล็กตรอนเรียกว่าอะไร?",
 
-    let user=username.value
-    let pass=password.value
+c:["แอโนด","แคโทด","อิเล็กโทรด","สะพานเกลือ"],
 
-    if(!user || !pass){
+a:1,
 
-    alert("กรอกข้อมูลให้ครบ")
-    return
+info:"Cathode คือขั้วที่เกิด Reduction"
 
-    }
+},
 
-    let users=JSON.parse(localStorage.getItem("users")) || {}
+{
 
-    if(isLogin){
+q:"ขั้วที่เกิดการเสียอิเล็กตรอนเรียกว่าอะไร?",
 
-    if(users[user] && users[user].password===pass){
+c:["แอโนด","แคโทด","นิวตรอน","โปรตอน"],
 
-    localStorage.setItem("currentUser",user)
+a:0,
 
-    alert("Login สำเร็จ")
-    closeLogin()
-    lobby.style.display="block"
+info:"Anode คือขั้วที่เกิด Oxidation"
 
-    }else{
+},
 
-    alert("ข้อมูลไม่ถูกต้อง")
+{
 
-    }
+q:"สารที่นำไฟฟ้าในสารละลายเรียกว่าอะไร?",
 
-    }else{
+c:["อิเล็กโทรไลต์","นิวเคลียส","โปรตอน","อะตอม"],
 
-    if(users[user]){
+a:0,
 
-    alert("Username ถูกใช้แล้ว")
-    return
+info:"Electrolyte คือสารที่นำไฟฟ้าได้"
 
-    }
+},
 
-    users[user]={
+{
 
-    username:user,
-    password:pass,
-    avatar:"",
+q:"แบตเตอรี่จัดเป็นเซลล์ชนิดใด?",
 
-    gamesPlayed:0,
-    level:1
+c:["เซลล์กัลวานิก","เซลล์ไฟฟ้า","เซลล์แสง","เซลล์เคมี"],
 
-    }
+a:0,
 
-    localStorage.setItem("users",JSON.stringify(users))
+info:"Battery คือ Galvanic Cell"
 
-    alert("สมัครสำเร็จ")
+},
 
-    switchForm()
+{
 
-    }
+q:"กระแสไฟฟ้าเกิดจากการเคลื่อนที่ของอะไร?",
 
-    }
+c:["โปรตอน","อิเล็กตรอน","นิวตรอน","อะตอม"],
 
-    function logout(){
+a:1,
 
-localStorage.removeItem("currentUser")
-closeProfile()
+info:"กระแสไฟฟ้าเกิดจาก Electron"
 
-lobby.style.display="none"
-loginPopup.style.display="flex"
+},
+
+{
+
+q:"การเคลือบโลหะด้วยไฟฟ้าเรียกว่าอะไร?",
+
+c:["Electroplating","Electrolysis","Oxidation","Reduction"],
+
+a:0,
+
+info:"Electroplating คือการเคลือบโลหะ"
+
+},
+
+{
+
+q:"สะพานเกลือมีหน้าที่อะไร?",
+
+c:["เพิ่มไฟฟ้า","เชื่อมวงจรไฟฟ้า","เพิ่มอุณหภูมิ","ลดแรงดัน"],
+
+a:1,
+
+info:"Salt bridge ช่วยให้วงจรสมบูรณ์"
+
+},
+
+{
+
+q:"หน่วยของแรงดันไฟฟ้าคืออะไร?",
+
+c:["แอมป์","โวลต์","วัตต์","โอห์ม"],
+
+a:1,
+
+info:"Voltage มีหน่วยเป็น Volt"
+
+},
+
+{
+
+q:"Oxidation คืออะไร?",
+
+c:["รับอิเล็กตรอน","เสียอิเล็กตรอน","รับโปรตอน","เสียโปรตอน"],
+
+a:1,
+
+info:"Oxidation คือการเสีย Electron"
 
 }
 
-    /* ===================== */
-    /* AVATAR UPLOAD */
-    /* ===================== */
+]
 
-    avatarUpload.addEventListener("change",function(){
 
-    let file=this.files[0]
 
-    let reader=new FileReader()
 
-    reader.onload=function(e){
+// SYSTEM
 
-    let current=localStorage.getItem("currentUser")
+let current=0
 
-    let users=JSON.parse(localStorage.getItem("users"))
+let score=0
 
-    users[current].avatar=e.target.result
 
-    localStorage.setItem("users",JSON.stringify(users))
+let menu=document.getElementById("menu")
 
-    avatarImage.src=e.target.result
+let settings=document.getElementById("settings")
 
-    }
+let game=document.getElementById("game")
 
-    reader.readAsDataURL(file)
+let end=document.getElementById("end")
 
-    })
-/* ===================== */
-/* CHECK LOGIN BEFORE LOBBY */
-/* ===================== */
 
-window.onload=function(){
 
-let current=localStorage.getItem("currentUser")
+let question=document.getElementById("question")
 
-if(current){
+let choices=document.getElementById("choices")
 
-// ถ้า login แล้ว
-lobby.style.display="block"
+let result=document.getElementById("result")
 
-}else{
+let scoreText=document.getElementById("score")
 
-// ถ้ายังไม่ได้ login
-loginPopup.style.display="flex"
+let finalScore=document.getElementById("finalScore")
+
+
+
+
+// SOUND
+
+let menuMusic=document.getElementById("menuMusic")
+
+let gameMusic=document.getElementById("gameMusic")
+
+let correctSound=document.getElementById("correctSound")
+
+let wrongSound=document.getElementById("wrongSound")
+
+let countSound=document.getElementById("countSound")
+
+let startSound=document.getElementById("startSound")
+
+let countdown=document.getElementById("countdown")
+
+let musicSlider=document.getElementById("musicSlider")
+
+let sfxSlider=document.getElementById("sfxSlider")
+
+
+
+// LOAD SAVE
+
+musicSlider.value=localStorage.getItem("music") || 0.3
+
+sfxSlider.value=localStorage.getItem("sfx") || 0.5
+
+
+menuMusic.volume=musicSlider.value
+gameMusic.volume=musicSlider.value
+
+correctSound.volume=sfxSlider.value
+wrongSound.volume=sfxSlider.value
+countSound.volume=sfxSlider.value
+startSound.volume=sfxSlider.value
+
+menuMusic.play()
+
+
+
+// SLIDER
+
+musicSlider.oninput=function(){
+
+menuMusic.volume=this.value
+gameMusic.volume=this.value
+
+localStorage.setItem("music",this.value)
 
 }
 
+
+sfxSlider.oninput=function(){
+
+correctSound.volume=this.value
+wrongSound.volume=this.value
+countSound.volume=this.value
+startSound.volume=this.value
+
+localStorage.setItem("sfx",this.value)
+
 }
-/* ===================== */
-/* START GAME */
-/* ===================== */
+
+
+
+
+// START
+function startCountdown(callback){
+
+let count=3
+
+countdown.style.opacity=1
+
+countdown.innerHTML=count
+
+countSound.play()
+
+countdown.classList.add("countAnim")
+
+let interval=setInterval(()=>{
+
+count--
+
+if(count>0){
+
+countdown.innerHTML=count
+
+countSound.currentTime=0
+countSound.play()
+
+countdown.classList.remove("countAnim")
+void countdown.offsetWidth
+countdown.classList.add("countAnim")
+
+}
+else if(count==0){
+
+countdown.innerHTML="START!"
+
+startSound.play()
+
+countdown.classList.remove("countAnim")
+void countdown.offsetWidth
+countdown.classList.add("countAnim")
+
+}
+else{
+
+clearInterval(interval)
+
+countdown.style.opacity=0
+
+callback()
+
+}
+
+},1000)
+
+}
 
 function startGame(){
 
-lobby.style.display="none"
-welcomeScreen.style.display="flex"
+menu.style.display="none"
+
+menuMusic.pause()
+
+startCountdown(()=>{
+
+game.style.display="block"
+
+gameMusic.play()
+
+current=0
+
+score=0
+
+showQuestion()
+let data = JSON.parse(localStorage.getItem("userData"));
+if(data){
+  data.playCount += 1;
+  localStorage.setItem("userData", JSON.stringify(data));
+}
+
+})
+
+}
+
+// SHOW QUESTION
+
+function showQuestion(){
+
+result.innerHTML=""
+
+let q=questions[current]
+
+question.innerHTML=q.q
+
+
+choices.innerHTML=""
+
+
+for(let i=0;i<q.c.length;i++){
+
+let btn=document.createElement("button")
+
+btn.innerHTML=q.c[i]
+
+btn.onclick=function(){
+
+answer(i)
+
+}
+
+choices.appendChild(btn)
+
+}
+
+}
+
+
+
+
+// ANSWER
+
+function answer(i){
+
+let q=questions[current]
+
+if(i==q.a){
+
+result.innerHTML="✔ ถูกต้อง<br>"+q.info
+
+score+=10
+
+correctSound.play()
+
+}else{
+
+result.innerHTML="❌ ผิด<br>"+q.info
+
+wrongSound.play()
+
+}
+
+
+scoreText.innerHTML="คะแนน: "+score
+
+
+current++
+
 
 setTimeout(()=>{
 
-welcomeScreen.style.display="none"
-gameScreen.style.display="block"
+if(current>=questions.length){
+
+endGame()
+
+}else{
+
+showQuestion()
+
+}
 
 },2000)
 
 }
 
+
+
+// END GAME
+
+function endGame(){
+
+game.style.display="none"
+
+end.style.display="flex"
+
+gameMusic.pause()
+
+menuMusic.play()
+
+finalScore.innerHTML="คะแนนของคุณ: "+score
+
+
+let rankText=""
+
+if(score>=70){
+
+rankText="🏆 Rank S"
+
+}
+else if(score>=50){
+
+rankText="🥇 Rank A"
+
+}
+else if(score>=30){
+
+rankText="🥈 Rank B"
+
+}
+else if(score>=10){
+
+rankText="🥉 Rank C"
+
+}
+
+
+document.getElementById("rank").innerHTML=rankText
+let data = JSON.parse(localStorage.getItem("userData"));
+if(data){
+  if(score > data.highScore){
+    data.highScore = score;
+  }
+  localStorage.setItem("userData", JSON.stringify(data));
+}
+
+}
+
+
+
+// MENU
+
+function openSettings(){
+
+menu.style.display="none"
+
+settings.style.display="block"
+
+}
+
+
+function closeSettings(){
+
+settings.style.display="none"
+
+menu.style.display="block"
+
+}
+
+
+function backMenu(){
+
+location.reload()
+
+}
+
+document.addEventListener("DOMContentLoaded", function(){
+
+  const upload = document.getElementById("avatarUpload");
+  const avatarImg = document.getElementById("avatarImage");
+
+  if(upload){
+    upload.addEventListener("change", function(){
+
+      let file = this.files[0];
+      if(!file) return;
+
+      let reader = new FileReader();
+
+      reader.onload = function(e){
+
+        let data = JSON.parse(localStorage.getItem("userData")) || {};
+
+        data.avatar = e.target.result;
+
+        localStorage.setItem("userData", JSON.stringify(data));
+
+        avatarImg.src = e.target.result; // อัปเดตทันที
+      };
+
+      reader.readAsDataURL(file);
+
+    });
+  }
+
+});
+
+
+</script>
+
+<!-- ปุ่มไอคอน Login -->
+<div id="loginIcon" onclick="openProfile()">👤</div>
+
+<!-- กล่อง Login -->
+<div id="loginPopup">
+  <div class="loginBox">
+
+    <h2 id="formTitle">Login</h2>
+
+    <div class="inputGroup">
+  <input type="text" id="username" required>
+  <label>Username</label>
+</div>
+
+<div class="inputGroup">
+  <input type="password" id="password" required>
+  <label>Password</label>
+</div>
+
+    <button onclick="submitForm()" id="mainBtn">เข้าสู่ระบบ</button>
+
+    <p id="switchText">
+      ยังไม่มีบัญชี? 
+      <span onclick="switchForm()" style="color:#00ffcc; cursor:pointer;">
+        สมัครสมาชิก
+      </span>
+    </p>
+
+    <button onclick="closeLogin()">ปิด</button>
+
+  </div>
+</div>
+
+<!-- PROFILE POPUP -->
+<div id="profilePopup">
+  <div class="profileBox">
+
+    <div class="avatarWrapper">
+  <img id="avatarImage" src="" />
+</div>
+
+<label class="uploadBtn">
+  เลือกรูปโปรไฟล์
+  <input type="file" id="avatarUpload" accept="image/*">
+</label>
+
+    <h2 id="profileName"></h2>
+
+    <p>🏆 คะแนนสูงสุด: <span id="highScore"></span></p>
+    <p>🎮 เล่นทั้งหมด: <span id="playCount"></span> ครั้ง</p>
+
+   <div class="nameChangeBox">
+  <input type="text" id="newName" required>
+  <label>เปลี่ยนชื่อใหม่</label>
+  <button onclick="changeName()">บันทึกชื่อ</button>
+</div>
+
+    <button onclick="logout()">ออกจากระบบ</button>
+    <button onclick="closeProfile()">ปิด</button>
+
+  </div>
+</div>
+
+<script>
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(screen=>{
+    screen.style.display = "none";
+  });
+  document.getElementById(id).style.display = "flex";
+}
+
+function goToModeSelect(){
+  showScreen("modeSelect");
+}
+
+function goToMenu(){
+  showScreen("menu");
+}
+
 /* ===================== */
-/* BACK TO LOBBY */
+/* MINING SYSTEM */
 /* ===================== */
 
-function backLobby(){
+let mineSize = 10
+let mineMap = []
 
-gameScreen.style.display="none"
-lobby.style.display="block"
+let inventory = {}
+let recipes=[
+
+{
+name:"⚙️ Steel",
+need:{
+"Iron":2,
+"Coal":1
+}
+},
+
+{
+name:"🔋 Battery",
+need:{
+"Copper":2,
+"Coal":1
+}
+},
+
+{
+name:"💎 Energy Crystal",
+need:{
+"Diamond":1,
+"Uranium":1
+}
+}
+
+]
+function hasItems(need){
+
+for(let item in need){
+
+if(!inventory[item] || inventory[item]<need[item]){
+
+return false
+
+}
+
+}
+
+return true
+
+}
+function renderCraft(){
+
+let html=""
+
+recipes.forEach((r,i)=>{
+
+let can=hasItems(r.need)
+
+html+=`
+<div class="craftItem ${can?'can':'cant'}">
+
+<div onclick="showRecipe(${i})">
+${r.name}
+</div>
+
+<button class="craftBtn"
+onclick="craftItem(${i})"
+${can?'':'disabled'}>
+Craft
+</button>
+
+</div>
+`
+
+})
+
+document.getElementById("craftList").innerHTML=html
+
+}
+function showRecipe(i){
+
+let r=recipes[i]
+
+let text=`<b>${r.name}</b><br><br>`
+
+for(let item in r.need){
+
+text+=`${item} x${r.need[item]}<br>`
+
+}
+
+document.getElementById("craftRecipe").innerHTML=text
+
+}
+function craftItem(i){
+
+let r=recipes[i]
+
+if(!hasItems(r.need)) return
+
+for(let item in r.need){
+
+inventory[item]-=r.need[item]
+
+}
+
+if(!inventory[r.name]) inventory[r.name]=0
+
+inventory[r.name]++
+
+renderInventory()
+renderLabInventory()
+renderCraft()
+
+}
+const minerals = [
+
+"🪨","🪨","🪨","🪨","🪨",
+
+"⚫ Coal",
+
+"🟤 Copper",
+
+"⚙️ Iron",
+
+"🥇 Gold",
+
+"💎 Diamond",
+
+"☢️ Uranium"
+
+]
+
+function randomMineral(){
+
+let r=Math.random()
+
+if(r<0.55) return "🪨"
+if(r<0.70) return "⚫ Coal"
+if(r<0.82) return "🟤 Copper"
+if(r<0.92) return "⚙️ Iron"
+if(r<0.97) return "🥇 Gold"
+if(r<0.995) return "💎 Diamond"
+
+return "☢️ Uranium"
+
+}
+
+function generateMine(){
+
+mineMap=[]
+
+for(let y=0;y<mineSize;y++){
+
+let row=[]
+
+for(let x=0;x<mineSize;x++){
+
+row.push(randomMineral())
+
+}
+
+mineMap.push(row)
+
+}
+
+renderMine()
+
+}
+
+function renderMine(){
+
+let grid=document.getElementById("mineGrid")
+
+grid.innerHTML=""
+
+for(let y=0;y<mineSize;y++){
+
+for(let x=0;x<mineSize;x++){
+
+let block=document.createElement("div")
+
+block.className="mineBlock"
+
+block.innerHTML="⬜"
+
+block.onclick=function(){
+
+mine(x,y)
+
+}
+
+grid.appendChild(block)
+
+}
+
+}
+
+}
+
+function mine(x,y){
+
+let mineral = mineMap[y][x]
+
+if(!mineral){
+alert("⏳ กำลังเกิดใหม่...")
+return
+}
+
+alert("คุณขุดเจอ "+mineral)
+
+let name = mineral.replace(/[^a-zA-Z]/g,"").trim()
+
+if(!inventory[name]) inventory[name]=0
+inventory[name]++
+
+mineMap[y][x] = null
+
+renderInventory()
+
+setTimeout(()=>{
+mineMap[y][x] = randomMineral()
+renderMine()
+},5000)
+
+}
+
+function renderInventory(){
+
+let inv = document.getElementById("inventory")
+
+inv.innerHTML=""
+
+for(let item in inventory){
+
+let slot = document.createElement("div")
+
+slot.className="invSlot"
+
+slot.innerHTML = item + "<br>"+inventory[item]
+
+inv.appendChild(slot)
+
+}
+
+}
+
+function renderLabInventory(){
+
+let box = document.getElementById("labInventory")
+
+if(!box) return
+
+let html=""
+
+for(let item in inventory){
+
+html += item + " x" + inventory[item] + "<br>"
+
+}
+
+box.innerHTML = html || "ไม่มีของ"
+
+}
+
+function startMining(){
+
+showScreen("miningGame")
+
+generateMine()
+
+renderInventory()
+
+}
+
+function goToMining(){
+
+showScreen("miningGame")
+
+renderInventory()
+
+}
+
+function renderInventory(){
+
+let inv = document.getElementById("inventory")
+
+inv.innerHTML=""
+
+for(let item in inventory){
+
+let slot = document.createElement("div")
+
+slot.className="invSlot"
+
+slot.innerHTML = item + "<br>x" + inventory[item]
+
+inv.appendChild(slot)
+
+}
+
+renderLabInventory()
 
 }
 
 /* ===================== */
-/* EXPERIMENT */
+/* LAB SYSTEM */
 /* ===================== */
 
-function startExperiment(){
+const reactions = {
 
-for(let i=0;i<20;i++){
+"H2O":{
 
-setTimeout(createBubble,i*200)
+anode:"O₂ Gas",
+cathode:"H₂ Gas"
+
+},
+
+"NaCl":{
+
+anode:"Cl₂ Gas",
+cathode:"Na Metal"
+
+},
+
+"CuSO4":{
+
+anode:"O₂ Gas",
+cathode:"Cu Metal"
 
 }
 
 }
 
-/* ===================== */
-/* BUBBLE EFFECT */
-/* ===================== */
+function openLab(){
 
-function createBubble(){
+showScreen("labScreen")
+
+renderCraft()
+
+renderLabInventory()
+
+}
+
+function backToMine(){
+
+showScreen("miningGame")
+
+}
+
+function runElectrolysis(){
+
+let chem=document.getElementById("chemSelect").value
+
+let reaction=reactions[chem]
+
+document.getElementById("labResult").innerHTML=
+
+"Anode ➜ "+reaction.anode+"<br>Cathode ➜ "+reaction.cathode
+
+spawnBubble()
+
+}
+
+function spawnBubble(){
+
+let area=document.getElementById("bubbleArea")
+
+for(let i=0;i<10;i++){
 
 let bubble=document.createElement("div")
 
-bubble.style.position="absolute"
-bubble.style.width="8px"
-bubble.style.height="8px"
-bubble.style.borderRadius="50%"
-bubble.style.background="white"
-bubble.style.left=(Math.random()*160+20)+"px"
-bubble.style.bottom="50px"
+bubble.className="bubble"
 
-bubble.style.animation="rise 3s linear"
+bubble.style.left=Math.random()*200+"px"
 
-document.querySelector(".beaker").appendChild(bubble)
+bubble.style.animationDelay=(Math.random()*2)+"s"
 
-setTimeout(()=>bubble.remove(),3000)
+area.appendChild(bubble)
+
+setTimeout(()=>bubble.remove(),2000)
 
 }
-    </script>
 
-    </body>
-    </html>
+}
+
+function startMatching(){
+  showScreen("matchingGame");
+  initMatchingGame();
+}
+
+function startGuessing(){
+  alert("เข้าเกมทายชื่อสารเคมี");
+}
+
+function startMining(){
+
+showScreen("miningGame")
+
+generateMine()
+
+renderInventory()
+
+}
+
+function startQuiz(){
+  showScreen("game"); 
+  startGame();
+}
+
+let firstCard=null;
+let lockBoard=false;
+let matchCount = 0;
+
+function initMatchingGame(){
+
+  const chemicals=[
+    "H₂O","NaCl","CO₂","O₂","H₂","NH₃","CH₄","HCl","NaOH","KCl",
+    "CaCO₃","MgO","SO₂","NO₂","C₂H₆","C₂H₄","H₂SO₄","HNO₃","Na₂CO₃","KOH"
+  ];
+
+  const pairs=[...chemicals,...chemicals]; // ทำให้เป็น 20 คู่
+
+  const shuffled=pairs.sort(()=>0.5-Math.random());
+
+  const grid=document.getElementById("matchGrid");
+  grid.innerHTML="";
+
+  shuffled.forEach(text=>{
+
+    const card=document.createElement("div");
+    card.classList.add("card");
+
+    card.dataset.value=text;
+    card.innerText="?";
+
+    card.onclick=()=>flipCard(card);
+
+    grid.appendChild(card);
+
+  });
+  matchCount = 0;
+  firstCard=null;
+  lockBoard=false;
+}
+
+function flipCard(card){
+
+  if(lockBoard || card.classList.contains("flipped")) return;
+
+  card.classList.add("flipped");
+  card.innerText=card.dataset.value;
+
+  if(!firstCard){
+    firstCard=card;
+    return;
+  }
+
+  if(firstCard.dataset.value===card.dataset.value){
+
+    firstCard.classList.add("matched");
+    card.classList.add("matched");
+
+    correctSound.currentTime = 0;
+    correctSound.play();
+
+    matchCount++;
+
+    if(matchCount===20){
+        setTimeout(()=>{
+            alert("🎉 คุณจับคู่สารเคมีครบแล้ว!");
+            goToModeSelect();
+        },500);
+    }
+
+    firstCard=null;
+    
+  }else{
+
+    wrongSound.currentTime = 0;
+    wrongSound.play();
+
+    lockBoard = true;
+
+    setTimeout(()=>{
+
+        card.classList.remove("flipped");
+        firstCard.classList.remove("flipped");
+
+        card.innerText="?";
+        firstCard.innerText="?";
+
+        firstCard=null;
+        lockBoard=false;
+
+    },800);
+
+}
+
+}
+
+// เปิดหน้าแรกตอนโหลดเว็บ
+showScreen("menu");
+</script>
+
+
+</body>
+</html>
