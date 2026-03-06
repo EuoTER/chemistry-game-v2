@@ -453,14 +453,16 @@ right:46%;
 .wire::after{
 content:"";
 position:absolute;
+left:0;
 width:4px;
-height:20px;
-background:cyan;
-animation:current 1s linear infinite;
+height:25px;
+background:linear-gradient(cyan,white,cyan);
+box-shadow:0 0 10px cyan;
+animation:current 0.6s linear infinite;
 }
 
 @keyframes current{
-0%{top:0}
+0%{top:-20px}
 100%{top:80px}
 }
 
@@ -490,6 +492,30 @@ background:#0f172a;
 color:white;
 border:none;
 margin:10px;
+}
+
+#questionBox{
+display:none;
+background:rgba(15,23,42,0.9);
+padding:20px;
+border-radius:15px;
+width:300px;
+margin:20px auto;
+box-shadow:0 0 20px cyan;
+}
+
+#answerInput{
+padding:10px;
+border-radius:10px;
+border:none;
+background:#020617;
+color:white;
+margin-right:10px;
+}
+
+#answerInput:focus{
+outline:none;
+box-shadow:0 0 10px cyan;
 }
 
     </style>
@@ -554,7 +580,9 @@ z-index:15;
 <input id="answerInput" placeholder="Your answer">
 
 <button onclick="checkAnswer()">Submit</button>
+<button onclick="showHint()">Hint 💡</button>
 
+<p id="hintText" style="color:cyan;margin-top:10px;"></p>
 </div>
 
 <h1>⚡ Electrolysis Lab</h1>
@@ -582,6 +610,11 @@ z-index:15;
 <option value="water">💧 น้ำ (H₂O)</option>
 <option value="salt">🧂 น้ำเกลือ (NaCl)</option>
 <option value="copper">🔵 Copper Sulfate (CuSO₄)</option>
+<option value="acid">🧪 กรดเกลือ (HCl)</option>
+<option value="silver">⚪ Silver Nitrate (AgNO₃)</option>
+<option value="nickel">🟢 Nickel Sulfate (NiSO₄)</option>
+<option value="iron">🟤 Iron Chloride (FeCl₃)</option>
+<option value="gold">🟡 Gold Chloride (AuCl₃)</option>
 </select>
 
 <button onclick="backLobby()">กลับ Lobby</button>
@@ -929,15 +962,67 @@ setTimeout(createBubble,i*200)
 setTimeout(()=>{
 
 if(solution==="water"){
-showQuestion("การแยกน้ำด้วยไฟฟ้า จะได้แก๊สอะไร?")
+showQuestion(
+"การแยกน้ำด้วยไฟฟ้า จะได้แก๊สอะไร?",
+"hydrogen",
+"เป็นแก๊สที่เบาที่สุดในตารางธาตุ | h____g__"
+)
 }
 
 if(solution==="salt"){
-showQuestion("การแยก NaCl จะได้แก๊สอะไรที่ขั้วบวก?")
+showQuestion(
+"การแยก NaCl จะได้แก๊สอะไรที่ขั้วบวก?",
+"chlorine",
+"เป็นแก๊สสีเขียวอมเหลือง | ch___i__"
+)
 }
 
 if(solution==="copper"){
-showQuestion("Electrolysis ของ CuSO₄ โลหะอะไรจะไปเกาะที่ขั้วลบ?")
+showQuestion(
+"Electrolysis ของ CuSO4 โลหะอะไรจะไปเกาะที่ขั้วลบ?",
+"copper",
+"โลหะสีส้มแดง | c__p__"
+)
+}
+
+if(solution==="acid"){
+showQuestion(
+"Electrolysis ของ HCl จะได้แก๊สอะไรที่ขั้วบวก?",
+"chlorine",
+"เป็นแก๊สที่มีกลิ่นฉุนใส่ในสระว่ายน้ำเพื่อฆ่าเชื้อ | c__or___"
+)
+}
+
+if(solution==="silver"){
+showQuestion(
+"Electrolysis ของ AgNO3 โลหะอะไรจะเกาะที่ขั้วลบ?",
+"silver",
+"โลหะสีเงิน | s_l__r"
+)
+}
+
+if(solution==="nickel"){
+showQuestion(
+"Electrolysis ของ NiSO4 โลหะอะไรจะเคลือบขั้วลบ?",
+"nickel",
+"โลหะสีเทา | n____l"
+)
+}
+
+if(solution==="iron"){
+showQuestion(
+"Electrolysis ของ FeCl3 จะได้โลหะอะไร?",
+"iron",
+"โลหะสีเทา | __o_"
+)
+}
+
+if(solution==="gold"){
+showQuestion(
+"Electrolysis ของ AuCl3 จะได้โลหะอะไร?",
+"gold",
+"โลหะสีทอง | G___"
+)
 }
 
 },3000)
@@ -957,8 +1042,17 @@ bubble.style.width="8px"
 bubble.style.height="8px"
 bubble.style.borderRadius="50%"
 bubble.style.background="white"
-bubble.style.left=(Math.random()*140+30)+"px"
-bubble.style.bottom="50px"
+bubble.style.bottom="60px"
+
+/* ฟองออกจากขั้วไฟฟ้า */
+
+let side=Math.random()
+
+if(side<0.5){
+bubble.style.left="70px"   // ขั้วซ้าย
+}else{
+bubble.style.left="120px"  // ขั้วขวา
+}
 
 bubble.style.animation="rise 3s linear"
 
@@ -969,15 +1063,17 @@ setTimeout(()=>bubble.remove(),3000)
 }
 
 let currentAnswer=""
+let currentHint=""
 
-function showQuestion(q){
+function showQuestion(q,answer,hint){
 
 questionBox.style.display="block"
 questionText.innerText=q
 
-if(q.includes("water")) currentAnswer="hydrogen"
-if(q.includes("NaCl")) currentAnswer="chlorine"
-if(q.includes("metal")) currentAnswer="copper"
+currentAnswer=answer
+currentHint=hint
+
+hintText.innerText=""
 
 }
 
@@ -993,6 +1089,12 @@ alert("Not quite. Correct answer: "+currentAnswer)
 
 questionBox.style.display="none"
 answerInput.value=""
+
+}
+
+function showHint(){
+
+hintText.innerText="Hint: "+currentHint
 
 }
 
