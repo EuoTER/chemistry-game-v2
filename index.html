@@ -2,7 +2,7 @@
     <html>
     <head>
     <meta charset="UTF-8">
-    <title>Chemistry Game Lobby</title>
+    <title>Chemistry Game Electricity</title>
 
     <style>
 
@@ -387,8 +387,9 @@ position:absolute;
 bottom:0;
 width:100%;
 height:120px;
-background:linear-gradient(cyan,#0ea5e9);
+background:linear-gradient(#22d3ee,#0284c7);
 animation:wave 3s infinite ease-in-out;
+box-shadow:0 0 20px cyan inset;
 }
 
 @keyframes wave{
@@ -411,59 +412,134 @@ opacity:0;
 
 }
 
-/* ELECTRODE */
+/* ELECTRODES */
 
 .electrode{
 position:absolute;
-top:60px;
-width:10px;
-height:150px;
-background:silver;
+top:90px;   /* ลดแท่งลงมา */
+width:12px;
+height:170px;  /* เพิ่มความยาวให้จุ่มลงน้ำ */
+border-radius:4px;
 }
 
-.left{
-left:45%;
+.anode{
+left:calc(50% - 80px);
+background:#ff4d4d;
+box-shadow:0 0 15px red;
 }
 
-.right{
-right:45%;
+.cathode{
+left:calc(50% + 80px);
+background:#4de0ff;
+box-shadow:0 0 15px cyan;
 }
 
 /* WIRES */
 
-.wire{
+.wireVertical{
 position:absolute;
-top:20px;
+top:40px;
+left:50%;
+transform:translateX(-50%);
 width:4px;
-height:120px;
-background:#444;
+height:50px;
+background:white;
+}
+
+/* สายแยกซ้าย */
+
+.wireSplitLeft{
+position:absolute;
+top:90px;
+left:50%;
+width:80px;
+height:4px;
+background:red;
+transform:translateX(-80px);
+box-shadow:0 0 10px red;
+}
+
+/* สายแยกขวา */
+
+.wireSplitRight{
+position:absolute;
+top:90px;
+left:50%;
+width:80px;
+height:4px;
+background:cyan;
 box-shadow:0 0 10px cyan;
 }
 
-.leftWire{
-left:46%;
+/* สายลงขั้วซ้าย */
+
+.wireDownLeft{
+position:absolute;
+top:90px;
+left:calc(50% - 80px);
+width:4px;
+height:120px;
+background:red;
+box-shadow:0 0 10px red;
 }
 
-.rightWire{
-right:46%;
+/* สายลงขั้วขวา */
+
+.wireDownRight{
+position:absolute;
+top:90px;
+left:calc(50% + 80px);
+width:4px;
+height:120px;
+background:cyan;
+box-shadow:0 0 10px cyan;
+}
+
+.labelLeft{
+position:absolute;
+top:55px;
+left:calc(50% - 95px);
+color:red;
+font-weight:bold;
+}
+
+.labelRight{
+position:absolute;
+top:55px;
+left:calc(50% + 65px);
+color:cyan;
+font-weight:bold;
 }
 
 /* ELECTRIC EFFECT */
 
-.wire::after{
-content:"";
-position:absolute;
-left:0;
-width:4px;
-height:25px;
-background:linear-gradient(cyan,white,cyan);
-box-shadow:0 0 10px cyan;
-animation:current 0.6s linear infinite;
+.leftWire::after{
+box-shadow:0 0 10px red;
+background:red;
 }
 
-@keyframes current{
-0%{top:-20px}
-100%{top:80px}
+.rightWire::after{
+box-shadow:0 0 10px cyan;
+background:cyan;
+}
+
+@keyframes currentMove{
+
+0%{
+top:-10px;
+left:0;
+}
+
+50%{
+top:0;
+left:100px;
+}
+
+100%{
+top:70px;
+left:100px;
+}
+
 }
 
 /* BATTERY */
@@ -474,15 +550,6 @@ top:0;
 left:50%;
 transform:translateX(-50%);
 font-size:40px;
-}
-
-.wire{
-position:absolute;
-top:20px;
-width:4px;
-height:80px;
-background:#444;
-box-shadow:0 0 10px cyan;
 }
 
 select{
@@ -518,10 +585,99 @@ outline:none;
 box-shadow:0 0 10px cyan;
 }
 
+/* SCIENCE GUIDE */
+
+#scienceGuide{
+position:fixed;
+bottom:0;
+right:0;
+display:flex;
+align-items:flex-end;
+gap:10px;
+z-index:12;
+}
+
+#scienceGuide img{
+height:320px;
+pointer-events:none;
+}
+
+#guideButton{
+background:linear-gradient(45deg,#06b6d4,#2563eb);
+border:none;
+padding:14px 22px;
+border-radius:12px;
+color:white;
+font-size:16px;
+cursor:pointer;
+box-shadow:0 0 20px cyan;
+transition:0.25s;
+margin-bottom:40px;
+}
+
+#guideButton:hover{
+transform:scale(1.08);
+box-shadow:0 0 35px cyan;
+}
+
+/* DATABASE POPUP */
+
+#dataPopup{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.7);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:50;
+}
+
+.dataBox{
+width:650px;
+max-height:500px;
+overflow:auto;
+background:#020617;
+border-radius:20px;
+padding:30px;
+box-shadow:0 0 40px cyan;
+}
+
+.dataBox h2{
+text-align:center;
+text-shadow:0 0 15px cyan;
+}
+
+.chemCard{
+background:#0f172a;
+padding:15px;
+margin:12px 0;
+border-radius:12px;
+box-shadow:0 0 10px rgba(0,255,255,0.3);
+}
+
     </style>
     </head>
 
     <body>
+
+        <audio id="bgMusic" loop>
+    <source src="bg.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="clickSound">
+    <source src="Click.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="correctSound">
+    <source src="correct.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="wrongSound">
+    <source src="wrong.mp3" type="audio/mpeg">
+    </audio>
 
     <canvas id="particles"></canvas>
 
@@ -530,7 +686,7 @@ box-shadow:0 0 10px cyan;
     <h1>CHEMISTRY GAME</h1>
     <div class="atom"></div>
     <button onclick="startGame()">เริ่มเกม</button>
-    <button>ตั้งค่า</button>
+    <button onclick="openSettings()">⚙️ Settings</button>
 
     </div>
 
@@ -583,6 +739,7 @@ z-index:15;
 <button onclick="showHint()">Hint 💡</button>
 
 <p id="hintText" style="color:cyan;margin-top:10px;"></p>
+
 </div>
 
 <h1>⚡ Electrolysis Lab</h1>
@@ -591,11 +748,23 @@ z-index:15;
 
 <div class="battery">🔋</div>
 
-<div class="wire leftWire"></div>
-<div class="wire rightWire"></div>
+<!-- WIRES L SHAPE -->
 
-<div class="electrode left"></div>
-<div class="electrode right"></div>
+<div class="wireVertical"></div>
+
+<div class="wireSplitLeft"></div>
+<div class="wireSplitRight"></div>
+
+<div class="wireDownLeft"></div>
+<div class="wireDownRight"></div>
+
+<div class="labelLeft">+ Anode</div>
+<div class="labelRight">− Cathode</div>
+
+<!-- ELECTRODES -->
+
+<div class="electrode anode"></div>
+<div class="electrode cathode"></div>
 
 <div class="beaker">
 <div class="water"></div>
@@ -618,6 +787,18 @@ z-index:15;
 </select>
 
 <button onclick="backLobby()">กลับ Lobby</button>
+
+<!-- SCIENCE GUIDE CHARACTER -->
+
+<div id="scienceGuide">
+
+<button id="guideButton" onclick="openData()">
+📚 ข้อมูลการทดลอง
+</button>
+
+<img src="dex.png">
+
+</div>
 
 </div>
 
@@ -901,23 +1082,31 @@ loginPopup.style.display="flex"
 /* CHECK LOGIN BEFORE LOBBY */
 /* ===================== */
 
+document.addEventListener("click",function(){
+
+let music=document.getElementById("bgMusic")
+
+if(music.paused){
+music.play()
+}
+
+},{once:true})
+
 window.onload=function(){
 
 let current=localStorage.getItem("currentUser")
 
+let music=document.getElementById("bgMusic")
+music.volume=0.5
+
 if(current){
-
-// ถ้า login แล้ว
 lobby.style.display="block"
-
 }else{
-
-// ถ้ายังไม่ได้ login
 loginPopup.style.display="flex"
-
 }
 
 }
+
 /* ===================== */
 /* START GAME */
 /* ===================== */
@@ -1042,17 +1231,29 @@ bubble.style.width="8px"
 bubble.style.height="8px"
 bubble.style.borderRadius="50%"
 bubble.style.background="white"
-bubble.style.bottom="60px"
+
+/* เริ่มจากก้นบีกเกอร์ */
+
+bubble.style.bottom="10px"
 
 /* ฟองออกจากขั้วไฟฟ้า */
 
 let side=Math.random()
 
 if(side<0.5){
-bubble.style.left="70px"   // ขั้วซ้าย
+
+bubble.style.left="35px"   // ตรง anode
+
 }else{
-bubble.style.left="120px"  // ขั้วขวา
+
+bubble.style.left="155px"  // ตรง cathode
+
 }
+
+/* ขยับนิดหน่อยให้ดูธรรมชาติ */
+
+bubble.style.left =
+parseInt(bubble.style.left) + (Math.random()*10-5) + "px"
 
 bubble.style.animation="rise 3s linear"
 
@@ -1081,13 +1282,18 @@ function checkAnswer(){
 
 let ans=answerInput.value.toLowerCase()
 
+questionBox.style.display="none"
+
 if(ans.includes(currentAnswer)){
-alert("Correct! 🎉")
+
+showResult(true)
+
 }else{
-alert("Not quite. Correct answer: "+currentAnswer)
+
+showResult(false)
+
 }
 
-questionBox.style.display="none"
 answerInput.value=""
 
 }
@@ -1098,7 +1304,253 @@ hintText.innerText="Hint: "+currentHint
 
 }
 
+function closeSettings(){
+settingsPopup.style.display="none"
+}
+
+let music=document.getElementById("bgMusic")
+let clickSound=document.getElementById("clickSound")
+let correctSound=document.getElementById("correctSound")
+let wrongSound=document.getElementById("wrongSound")
+
+let musicVolume=localStorage.getItem("musicVolume") || 0.5
+let sfxVolume=localStorage.getItem("sfxVolume") || 0.5
+let muted=localStorage.getItem("muted") === "true"
+
+function playClick(){
+
+clickSound.currentTime=0
+clickSound.volume=sfxVolume
+clickSound.play()
+
+}
+
+function playCorrect(){
+
+correctSound.currentTime=0
+correctSound.volume=sfxVolume
+correctSound.play()
+
+}
+
+function playWrong(){
+
+wrongSound.currentTime=0
+wrongSound.volume=sfxVolume
+wrongSound.play()
+
+}
+
+function toggleMute(){
+
+muted=!muted
+
+if(muted){
+
+music.volume=0
+document.getElementById("muteBtn").innerText="🔊 Unmute"
+
+}else{
+
+music.volume=document.getElementById("musicSlider").value
+document.getElementById("muteBtn").innerText="🔇 Mute"
+
+}
+
+localStorage.setItem("muted",muted)
+
+}
+
+music.volume=musicVolume
+
+document.getElementById("musicSlider").value=musicVolume
+document.getElementById("sfxSlider").value=sfxVolume
+
+function openSettings(){
+settingsPopup.style.display="flex"
+}
+
+function closeSettings(){
+settingsPopup.style.display="none"
+}
+
+musicSlider.addEventListener("input",function(){
+
+music.volume=this.value
+localStorage.setItem("musicVolume",this.value)
+
+})
+
+document.getElementById("sfxSlider").addEventListener("input",function(){
+
+localStorage.setItem("sfxVolume",this.value)
+
+})
+
+function showResult(correct){
+
+let screen=document.getElementById("resultScreen")
+let text=document.getElementById("resultText")
+let img=document.getElementById("resultImage")
+
+screen.style.display="flex"
+
+if(correct){
+
+text.innerText="You correct 🎉✨"
+img.src="happy.png"
+playCorrect()
+
+}else{
+
+text.innerText="Wrong answer 😢"
+img.src="sad.png"
+playWrong()
+
+}
+
+}
+
+function closeResult(){
+
+document.getElementById("resultScreen").style.display="none"
+
+}
+
+document.querySelectorAll("button").forEach(btn=>{
+
+btn.addEventListener("click",playClick)
+
+})
+
+function openData(){
+document.getElementById("dataPopup").style.display="flex"
+}
+
+function closeData(){
+document.getElementById("dataPopup").style.display="none"
+}
+
     </script>
+
+<div class="popup" id="settingsPopup">
+<div class="popupBox">
+
+<h2>⚙️ Settings</h2>
+
+<p>🎵 Music Volume</p>
+<input type="range" id="musicSlider" min="0" max="1" step="0.01">
+
+<p>🔊 Sound Effects</p>
+<input type="range" id="sfxSlider" min="0" max="1" step="0.01">
+
+<br><br>
+
+<button onclick="toggleMute()" id="muteBtn">🔇 Mute</button>
+<br><br>
+
+<button onclick="closeSettings()">Close</button>
+
+</div>
+</div>
+
+<div id="resultScreen" style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#020617;
+justify-content:center;
+align-items:center;
+z-index:30;
+">
+
+<div style="
+width:700px;
+height:250px;
+background:#0f172a;
+border-radius:25px;
+box-shadow:0 0 40px cyan;
+display:flex;
+align-items:center;
+padding:30px;
+">
+
+<img id="resultImage" src="" style="
+width:200px;
+margin-right:40px;
+">
+
+<div>
+
+<h1 id="resultText"></h1>
+
+<button onclick="closeResult()" style="margin-top:20px;">
+Continue
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- DATABASE POPUP -->
+
+<div id="dataPopup">
+
+<div class="dataBox">
+
+<h2>🧪 คลังข้อมูลสารเคมี</h2>
+
+<div class="chemCard">
+<b>H₂O (Water)</b><br>
+แยกด้วยไฟฟ้าได้ Hydrogen และ Oxygen
+</div>
+
+<div class="chemCard">
+<b>NaCl (Salt Water)</b><br>
+ขั้วบวกจะเกิด Chlorine gas
+</div>
+
+<div class="chemCard">
+<b>CuSO₄</b><br>
+Copper จะไปเกาะที่ Cathode
+</div>
+
+<div class="chemCard">
+<b>HCl</b><br>
+Electrolysis จะให้ Hydrogen และ Chlorine
+</div>
+
+<div class="chemCard">
+<b>AgNO₃</b><br>
+Silver plating ที่ Cathode
+</div>
+
+<div class="chemCard">
+<b>NiSO₄</b><br>
+Nickel electroplating
+</div>
+
+<div class="chemCard">
+<b>FeCl₃</b><br>
+เกิด Iron deposition
+</div>
+
+<div class="chemCard">
+<b>AuCl₃</b><br>
+ใช้ทำ Gold plating
+</div>
+
+<br>
+
+<button onclick="closeData()">ปิด</button>
+
+</div>
+</div>
 
     </body>
     </html>
