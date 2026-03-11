@@ -804,31 +804,6 @@ z-index:15;
 
     <div id="loginIcon" onclick="openProfile()">👤</div>
 
-    <!-- LOGIN -->
-
-    <div class="popup" id="loginPopup">
-
-    <div class="popupBox">
-
-    <h2 id="formTitle">Login</h2>
-
-    <input id="username" placeholder="Username"><br>
-    <input id="password" type="password" placeholder="Password"><br>
-
-    <button onclick="submitForm()" id="mainBtn">เข้าสู่ระบบ</button>
-
-    <p id="switchText">
-    ยังไม่มีบัญชี?
-    <span onclick="switchForm()" style="color:cyan;cursor:pointer">
-    สมัครสมาชิก
-    </span>
-    </p>
-
-    <button onclick="closeLogin()">ปิด</button>
-
-    </div>
-    </div>
-
     <!-- PROFILE -->
 
     <div class="popup" id="profilePopup">
@@ -844,7 +819,7 @@ z-index:15;
     <input type="file" id="avatarUpload" hidden>
     </label>
 
-    <input id="nameInput" placeholder="ชื่อผู้เล่น">
+    <input id="nameInput" placeholder="ใส่ชื่อผู้เล่น">
 
     <button onclick="saveName()">บันทึกชื่อ</button>
 
@@ -857,7 +832,7 @@ z-index:15;
 
     </div>
 
-    <button onclick="logout()">ออกจากระบบ</button>
+    <button onclick="resetPlayer()">รีเซ็ตผู้เล่น</button>
     <button onclick="closeProfile()">ปิด</button>
 
     </div>
@@ -921,133 +896,52 @@ z-index:15;
     /* LOGIN SYSTEM */
     /* ===================== */
 
-    let isLogin=true
+function openProfile(){
 
-    function openProfile(){
+let data = JSON.parse(localStorage.getItem("playerData")) || {}
 
-    let current=localStorage.getItem("currentUser")
+nameInput.value = data.name || ""
+avatarImage.src = data.avatar || ""
 
-    if(current){
+gamesPlayed.innerText = data.gamesPlayed || 0
+playerLevel.innerText = data.level || 1
 
-    let users=JSON.parse(localStorage.getItem("users"))
-
-    let data=users[current]
-
-    nameInput.value=data.username
-    avatarImage.src=data.avatar || ""
-
-    gamesPlayed.innerText=data.gamesPlayed || 0
-    playerLevel.innerText=data.level || 1
-
-    profilePopup.style.display="flex"
-
-    }else{
-
-    loginPopup.style.display="flex"
+profilePopup.style.display="flex"
 
     }
 
-    }
+    function saveName(){
 
-    function closeLogin(){
-    loginPopup.style.display="none"
-    }
+let name = document.getElementById("nameInput").value
 
-    function closeProfile(){
-    profilePopup.style.display="none"
-    }
+if(!name){
+alert("กรุณาใส่ชื่อ")
+return
+}
 
-    function switchForm(){
+let data = JSON.parse(localStorage.getItem("playerData")) || {}
 
-    isLogin=!isLogin
+data.name = name
+data.gamesPlayed = data.gamesPlayed || 0
+data.level = data.level || 1
 
-    if(isLogin){
+localStorage.setItem("playerData",JSON.stringify(data))
 
-    formTitle.innerText="Login"
-    mainBtn.innerText="เข้าสู่ระบบ"
+alert("บันทึกชื่อแล้ว")
 
-    switchText.innerHTML=`ยังไม่มีบัญชี?
-    <span onclick="switchForm()" style="color:cyan;cursor:pointer">สมัครสมาชิก</span>`
+}
 
-    }else{
+function resetPlayer(){
 
-    formTitle.innerText="Register"
-    mainBtn.innerText="สมัครสมาชิก"
+localStorage.removeItem("playerData")
 
-    switchText.innerHTML=`มีบัญชีแล้ว?
-    <span onclick="switchForm()" style="color:cyan;cursor:pointer">เข้าสู่ระบบ</span>`
+nameInput.value=""
+avatarImage.src=""
 
-    }
+gamesPlayed.innerText="0"
+playerLevel.innerText="1"
 
-    }
-
-    function submitForm(){
-
-    let user=username.value
-    let pass=password.value
-
-    if(!user || !pass){
-
-    alert("กรอกข้อมูลให้ครบ")
-    return
-
-    }
-
-    let users=JSON.parse(localStorage.getItem("users")) || {}
-
-    if(isLogin){
-
-    if(users[user] && users[user].password===pass){
-
-    localStorage.setItem("currentUser",user)
-
-    alert("Login สำเร็จ")
-    closeLogin()
-    lobby.style.display="block"
-
-    }else{
-
-    alert("ข้อมูลไม่ถูกต้อง")
-
-    }
-
-    }else{
-
-    if(users[user]){
-
-    alert("Username ถูกใช้แล้ว")
-    return
-
-    }
-
-    users[user]={
-
-    username:user,
-    password:pass,
-    avatar:"",
-
-    gamesPlayed:0,
-    level:1
-
-    }
-
-    localStorage.setItem("users",JSON.stringify(users))
-
-    alert("สมัครสำเร็จ")
-
-    switchForm()
-
-    }
-
-    }
-
-    function logout(){
-
-localStorage.removeItem("currentUser")
-closeProfile()
-
-lobby.style.display="none"
-loginPopup.style.display="flex"
+profilePopup.style.display="none"
 
 }
 
@@ -1063,13 +957,11 @@ loginPopup.style.display="flex"
 
     reader.onload=function(e){
 
-    let current=localStorage.getItem("currentUser")
+let data = JSON.parse(localStorage.getItem("playerData")) || {}
 
-    let users=JSON.parse(localStorage.getItem("users"))
+data.avatar = e.target.result
 
-    users[current].avatar=e.target.result
-
-    localStorage.setItem("users",JSON.stringify(users))
+localStorage.setItem("playerData",JSON.stringify(data))
 
     avatarImage.src=e.target.result
 
@@ -1094,16 +986,10 @@ music.play()
 
 window.onload=function(){
 
-let current=localStorage.getItem("currentUser")
-
 let music=document.getElementById("bgMusic")
 music.volume=0.5
 
-if(current){
 lobby.style.display="block"
-}else{
-loginPopup.style.display="flex"
-}
 
 }
 
